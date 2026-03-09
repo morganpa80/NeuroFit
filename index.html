@@ -4,84 +4,184 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Energy Zones Prototype</title>
+
 <style>
-    body {
-        margin: 0;
-        font-family: system-ui, Arial, sans-serif;
-        background: linear-gradient(135deg, #0ea5e9, #22c55e);
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-    }
-    .box {
-        background: #ffffffee;
-        padding: 24px;
-        border-radius: 16px;
-        text-align: center;
-        max-width: 420px;
-        width: 100%;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.18);
-    }
-    h1 {
-        margin: 0 0 10px;
-        font-size: 1.8rem;
-        color: #0f172a;
-    }
-    .sub { 
-        margin: 0 0 20px; 
-        font-size: 0.95rem;
-        color: #475569;
-    }
-    button {
-        width: 100%;
-        padding: 14px;
-        margin: 6px 0;
-        border: 0;
-        border-radius: 10px;
-        font-size: 1.1rem;
-        cursor: pointer;
-    }
-    .wake { background: #e0f2fe; }
-    .focus { background: #dcfce7; }
-    .reset { background: #fef9c3; }
-    .calm { background: #fee2e2; }
-    small {
-        display: block;
-        margin-top: 15px;
-        opacity: 0.7;
-    }
+  body {
+    margin:0; font-family:system-ui,Arial,sans-serif;
+    background:#f1f5f9; color:#0f172a;
+  }
+  header {
+    background:#0ea5e9; padding:16px;
+    color:white; font-weight:700;
+    text-align:center; font-size:1.4rem;
+  }
+  nav {
+    display:flex; justify-content:center;
+    gap:10px; flex-wrap:wrap;
+    background:#e2e8f0; padding:10px;
+  }
+  nav button {
+    padding:10px 16px; border:0;
+    background:#fff; border-radius:8px;
+    cursor:pointer; font-size:1rem;
+    box-shadow:0 2px 4px rgba(0,0,0,0.1);
+  }
+  section { display:none; padding:20px; }
+  section.active { display:block; }
+
+  h2 { margin-top:0; }
+
+  .card {
+    background:white; padding:16px;
+    border-radius:12px; margin:10px 0;
+    box-shadow:0 2px 6px rgba(0,0,0,0.08);
+  }
+
+  button.action {
+    width:100%; padding:12px;
+    margin-top:10px; border:0;
+    border-radius:10px; cursor:pointer;
+    font-size:1rem; background:#0ea5e9;
+    color:white; font-weight:600;
+  }
+
+  .plan-box {
+    background:#fff; padding:16px;
+    border-radius:12px; margin-top:20px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .routine-step {
+    margin:8px 0; padding:8px;
+    border-left:4px solid #0ea5e9;
+    background:#f8fafc;
+    border-radius:6px;
+  }
 </style>
+
 </head>
 <body>
 
-<div class="box">
-    <h1>Energy Zones</h1>
-    <p class="sub">Choose a quick routine</p>
+<header>Energy Zones</header>
 
-    <button class="wake" onclick="showPlan('Wake‑Up', ['Marching','Star Steps','Quick Feet'])">
-        🔵 Wake‑Up Routine
-    </button>
+<nav>
+  <button onclick="navTo('home')">Home</button>
+  <button onclick="navTo('screening')">A1 Screening</button>
+  <button onclick="navTo('planned')">Planned Workout</button>
+</nav>
 
-    <button class="focus" onclick="showPlan('Focus', ['Wall Pushes','Figure‑8 Arms','Balance Hold'])">
-        🟢 Focus Routine
-    </button>
+<!-- HOME -->
+<section id="home" class="active">
+  <div class="card">
+    <h2>Welcome</h2>
+    <p>This prototype includes:</p>
+    <ul>
+      <li>A1 Screening Test</li>
+      <li>Personalised Planned Workout Generator</li>
+      <li>Multi‑page navigation (single‑file app)</li>
+    </ul>
+    <button class="action" onclick="navTo('screening')">Start Screening</button>
+  </div>
+</section>
 
-    <button class="reset" onclick="showPlan('Reset', ['Twist & Breathe','Forward Fold','Step Turns'])">
-        🟡 Reset Routine
-    </button>
+<!-- SCREENING TEST -->
+<section id="screening">
+  <h2>A1 Screening Test</h2>
+  <p>Answer the questions and receive a personalised workout plan.</p>
 
-    <button class="calm" onclick="showPlan('Calm', ['Palm Press','Shoulder Rolls','Shape Breathing'])">
-        🔴 Calm Routine
-    </button>
+  <div class="card">
+    <label>Energy right now?</label><br>
+    <select id="energy">
+      <option value="low">Low</option>
+      <option value="medium">Medium</option>
+      <option value="high">High</option>
+    </select>
 
-    <small>Prototype • GitHub Pages Ready</small>
-</div>
+    <br><br>
+    <label>Focus level?</label><br>
+    <select id="focus">
+      <option value="drifting">Drifting</option>
+      <option value="steady">Steady</option>
+      <option value="fidgety">Fidgety</option>
+    </select>
+
+    <br><br>
+    <label>Body feeling?</label><br>
+    <select id="body">
+      <option value="sluggish">Sluggish</option>
+      <option value="balanced">Balanced</option>
+      <option value="tense">Tense</option>
+    </select>
+
+    <br><br>
+    <label>Time available?</label><br>
+    <select id="time">
+      <option value="2">2 minutes</option>
+      <option value="5">5 minutes</option>
+      <option value="10">10 minutes</option>
+    </select>
+
+    <button class="action" onclick="createWorkout()">Generate Workout</button>
+  </div>
+</section>
+
+<!-- PLANNED WORKOUT -->
+<section id="planned">
+  <h2>Planned Workout</h2>
+  <p>Your personalised routine will appear here.</p>
+
+  <div id="workoutOutput"></div>
+</section>
 
 <script>
-function showPlan(title, steps) {
-    alert(title + " Routine:\n\n• " + steps.join("\n• "));
+function navTo(page) {
+  document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
+  document.getElementById(page).classList.add("active");
+  window.scrollTo(0,0);
+}
+
+function createWorkout() {
+  const energy = document.getElementById("energy").value;
+  const focus = document.getElementById("focus").value;
+  const body = document.getElementById("body").value;
+  const time = parseInt(document.getElementById("time").value);
+
+  // Decide category
+  let type = "Calm";
+
+  if (energy === "low" || body === "sluggish") type = "Wake-Up";
+  else if (focus === "drifting") type = "Focus";
+  else if (body === "tense" || energy === "high") type = "Reset";
+
+  // Exercises database
+  const routines = {
+    "Wake-Up": ["Marching", "Star Steps", "Cross‑Crawl", "Quick Feet"],
+    "Focus": ["Wall Pushes", "Figure‑8 Arms", "Toe-Heel Walk", "Balance Hold"],
+    "Reset": ["Twist & Breathe", "Forward Fold", "Band Pull‑Apart", "Step Turns"],
+    "Calm": ["Palm Press", "Shoulder Rolls", "Shape Breathing", "Grounding Press"]
+  };
+
+  // Build workout
+  const steps = routines[type].slice(0,3);
+  const minsPerStep = Math.max(1, Math.floor(time / (steps.length + 2)));
+
+  let html = `
+    <div class="plan-box">
+      <h3>${type} Routine (${time} min)</h3>
+      <div class="routine-step"><strong>Warm-up:</strong> ${steps[0]} (${minsPerStep} min)</div>
+  `;
+
+  steps.forEach(step => {
+    html += `<div class='routine-step'><strong>${step}:</strong> ${minsPerStep} min</div>`;
+  });
+
+  html += `
+      <div class="routine-step"><strong>Cool-down:</strong> ${steps[steps.length-1]} (${minsPerStep} min)</div>
+    </div>
+  `;
+
+  document.getElementById("workoutOutput").innerHTML = html;
+  navTo("planned");
 }
 </script>
 
