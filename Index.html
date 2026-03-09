@@ -1,1 +1,89 @@
-<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Energy Zones</title><body style="margin:0;font:16px/1.4 system-ui,Segoe UI,Roboto,Arial,sans-serif;display:grid;place-items:center;min-height:100vh;background:linear-gradient(135deg,#0ea5e9,#22c55e)"><div style="text-align:center;padding:24px;max-width:680px;color:#0b1324;background:#ffffffe6;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.15)"><h1 style="margin:.2rem 0 0">Energy Zones</h1><p style="margin:.25rem 0 1rem">Choose a quick routine:</p><div><button onclick="alert('Wake‑Up • 2‑min:\\nMarching → Star Steps → Quick Feet')" style="margin:.25rem;padding:.6rem 1rem;border-radius:.6rem;border:0;background:#e0f2fe">🔵 Wake‑Up</button><button onclick="alert('Focus • 5‑min:\\nWall Pushes → Figure‑8 Arms → Balance')" style="margin:.25rem;padding:.6rem 1rem;border-radius:.6rem;border:0;background:#dcfce7">🟢 Focus</button><button onclick="alert('Reset • 5‑min:\\nTwist & Breathe → Forward Fold → Step Turns')" style="margin:.25rem;padding:.6rem 1rem;border-radius:.6rem;border:0;background:#fef9c3">🟡 Reset</button><button onclick="alert('Calm • 5‑min:\\nPalm Press → Shoulder Rolls → Shape Breathing')" style="margin:.25rem;padding:.6rem 1rem;border-radius:.6rem;border:0;background:#fee2e2">🔴 Calm</button></div><p style="margin:1rem 0 0;font-size:.85rem;opacity:.8">Prototype for testing only</p></div></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Energy Zones Prototype</title>
+<style>
+    body {
+        margin: 0;
+        font-family: system-ui, Arial, sans-serif;
+        background: linear-gradient(135deg, #0ea5e9, #22c55e);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+    .box {
+        background: #ffffffee;
+        padding: 24px;
+        border-radius: 16px;
+        text-align: center;
+        max-width: 420px;
+        width: 100%;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    }
+    h1 {
+        margin: 0 0 10px;
+        font-size: 1.8rem;
+        color: #0f172a;
+    }
+    .sub { 
+        margin: 0 0 20px; 
+        font-size: 0.95rem;
+        color: #475569;
+    }
+    button {
+        width: 100%;
+        padding: 14px;
+        margin: 6px 0;
+        border: 0;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        cursor: pointer;
+    }
+    .wake { background: #e0f2fe; }
+    .focus { background: #dcfce7; }
+    .reset { background: #fef9c3; }
+    .calm { background: #fee2e2; }
+    small {
+        display: block;
+        margin-top: 15px;
+        opacity: 0.7;
+    }
+</style>
+</head>
+<body>
+
+<div class="box">
+    <h1>Energy Zones</h1>
+    <p class="sub">Choose a quick routine</p>
+
+    <button class="wake" onclick="showPlan('Wake‑Up', ['Marching','Star Steps','Quick Feet'])">
+        🔵 Wake‑Up Routine
+    </button>
+
+    <button class="focus" onclick="showPlan('Focus', ['Wall Pushes','Figure‑8 Arms','Balance Hold'])">
+        🟢 Focus Routine
+    </button>
+
+    <button class="reset" onclick="showPlan('Reset', ['Twist & Breathe','Forward Fold','Step Turns'])">
+        🟡 Reset Routine
+    </button>
+
+    <button class="calm" onclick="showPlan('Calm', ['Palm Press','Shoulder Rolls','Shape Breathing'])">
+        🔴 Calm Routine
+    </button>
+
+    <small>Prototype • GitHub Pages Ready</small>
+</div>
+
+<script>
+function showPlan(title, steps) {
+    alert(title + " Routine:\n\n• " + steps.join("\n• "));
+}
+</script>
+
+</body>
+</html>
