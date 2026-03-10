@@ -1,189 +1,516 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Energy Zones Prototype</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>30‑Minute Regulation‑First Workout Planner</title>
+  <meta name="description" content="Pre‑questionnaire that generates a personalised 30‑minute regulation‑first workout (Wake Up, Focus, Reset, Calm) with printable routine and classroom-friendly options." />
+  <style>
+    :root{
+      --bg:#0f172a;           /* slate-900 */
+      --panel:#111827;        /* gray-900 */
+      --card:#111827;         /* gray-900 */
+      --muted:#94a3b8;        /* slate-400 */
+      --text:#e5e7eb;         /* gray-200 */
+      --accent:#38bdf8;       /* sky-400 */
+      --good:#34d399;         /* green-400 */
+      --warn:#f59e0b;         /* amber-500 */
+      --danger:#f87171;       /* red-400 */
+      --border:#1f2937;       /* gray-800 */
+      --chip:#0b1220;         /* dark chip */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;}
+    body{
+      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
+      background: linear-gradient(180deg, var(--bg), #0b1220 40%, #0b1220);
+      color:var(--text);
+    }
+    header{
+      position:sticky; top:0; z-index:10; backdrop-filter:saturate(140%) blur(4px);
+      background:linear-gradient(180deg, rgba(15,23,42,.95), rgba(15,23,42,.75));
+      border-bottom:1px solid var(--border);
+    }
+    .wrap{max-width:1100px; margin:0 auto; padding:16px;}
+    h1{font-size:clamp(1.4rem,2.6vw,2rem); margin:8px 0 2px;}
+    h2{font-size:1.15rem; margin:16px 0 8px; color:#e2e8f0}
+    h3{font-size:1rem; margin:12px 0 6px; color:#f1f5f9}
+    p,li{color:var(--muted)}
 
-<style>
-  body {
-    margin:0; font-family:system-ui,Arial,sans-serif;
-    background:#f1f5f9; color:#0f172a;
-  }
-  header {
-    background:#0ea5e9; padding:16px;
-    color:white; font-weight:700;
-    text-align:center; font-size:1.4rem;
-  }
-  nav {
-    display:flex; justify-content:center;
-    gap:10px; flex-wrap:wrap;
-    background:#e2e8f0; padding:10px;
-  }
-  nav button {
-    padding:10px 16px; border:0;
-    background:#fff; border-radius:8px;
-    cursor:pointer; font-size:1rem;
-    box-shadow:0 2px 4px rgba(0,0,0,0.1);
-  }
-  section { display:none; padding:20px; }
-  section.active { display:block; }
+    .grid{
+      display:grid; gap:16px; align-items:start;
+      grid-template-columns: 1.1fr 1fr;
+    }
+    @media (max-width: 980px){ .grid{ grid-template-columns: 1fr; } }
 
-  h2 { margin-top:0; }
+    .card{
+      background:radial-gradient(1200px 600px at 0% -20%, rgba(56,189,248,.05), transparent 40%), var(--card);
+      border:1px solid var(--border); border-radius:14px; padding:16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.25);
+    }
+    .controls{
+      display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:8px 0 4px;
+    }
+    .btn{
+      appearance:none; border:1px solid var(--border); background:linear-gradient(180deg,#0e1829,#0b1220);
+      color:var(--text); padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:600; letter-spacing:.2px;
+    }
+    .btn.primary{ border-color:#1f4b5f; background:linear-gradient(180deg,#0c2432,#0a1722); color:#e6f9ff }
+    .btn.good{ border-color:#0f3b2d; background:linear-gradient(180deg,#0c2b21,#0a1f19); color:#eafff8 }
+    .btn:disabled{opacity:.6; cursor:not-allowed}
 
-  .card {
-    background:white; padding:16px;
-    border-radius:12px; margin:10px 0;
-    box-shadow:0 2px 6px rgba(0,0,0,0.08);
-  }
+    .tag{display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:999px; font-size:.85rem; color:#cbd5e1;
+         background:linear-gradient(180deg,#0b1220,#0b1220); border:1px solid var(--border);}
+    .tag .dot{width:8px; height:8px; border-radius:999px; background:var(--accent)}
 
-  button.action {
-    width:100%; padding:12px;
-    margin-top:10px; border:0;
-    border-radius:10px; cursor:pointer;
-    font-size:1rem; background:#0ea5e9;
-    color:white; font-weight:600;
-  }
+    fieldset{ border:1px solid var(--border); border-radius:12px; padding:12px; margin:10px 0; }
+    legend{ color:#cfe7ff; font-weight:700; letter-spacing:.2px; padding:0 6px;}
 
-  .plan-box {
-    background:#fff; padding:16px;
-    border-radius:12px; margin-top:20px;
-    box-shadow:0 2px 8px rgba(0,0,0,0.1);
-  }
+    .q{ display:grid; gap:10px; grid-template-columns: 1fr; border-bottom:1px dashed var(--border); padding:10px 0; }
+    .q:last-child{border-bottom:0}
 
-  .routine-step {
-    margin:8px 0; padding:8px;
-    border-left:4px solid #0ea5e9;
-    background:#f8fafc;
-    border-radius:6px;
-  }
-</style>
+    .q .meta{ display:flex; align-items:center; gap:8px; color:#cbd5e1; font-weight:600; }
+    .q .meta .star{ color:#fbbf24 }
+    .opts{ display:flex; flex-wrap:wrap; gap:8px; }
+    .opt{ display:flex; align-items:center; gap:6px; padding:8px 10px; border:1px solid var(--border); border-radius:10px; background:var(--chip); }
 
+    .sticky-actions{ position:sticky; bottom:0; background:linear-gradient(180deg, transparent, rgba(11,18,32,.9)); padding:10px 0 0; }
+
+    .results h2{ display:flex; align-items:center; gap:10px; }
+    .plan-section{ border:1px solid var(--border); border-radius:12px; padding:12px; margin:14px 0; background:linear-gradient(180deg,#0c1424,#0b1220);}
+    .plan-section h3{ display:flex; align-items:center; justify-content:space-between; }
+    .items{ display:grid; gap:8px; }
+    .item{ border:1px solid var(--border); border-radius:10px; padding:10px; background:linear-gradient(180deg,#0a1423,#0a121a); }
+    .item small{ color:#8fa3bd }
+
+    .two-col{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+    @media (max-width: 720px){ .two-col{ grid-template-columns: 1fr; } }
+
+    .muted{ color:var(--muted) }
+    .warn{ color:var(--warn) }
+    .danger{ color:var(--danger) }
+    .good{ color:var(--good) }
+
+    .hr{ height:1px; background:linear-gradient(90deg, transparent, var(--border), transparent); margin:12px 0 }
+
+    .kicker{ font-size:.9rem; color:#9fb4cf; }
+
+    .pillbar{ display:flex; gap:8px; flex-wrap:wrap; }
+
+    /* Print styles: only print the plan */
+    @media print{
+      body{ background:#fff; color:#000 }
+      header, .questionnaire, .sticky-actions, .controls-top, .build-actions, .info, .hr, .muted{ display:none !important; }
+      .results{ box-shadow:none; }
+      .plan-section, .item{ background:#fff; border-color:#bbb; }
+      a[href]:after{ content:"" }
+    }
+  </style>
 </head>
 <body>
-
-<header>Energy Zones</header>
-
-<nav>
-  <button onclick="navTo('home')">Home</button>
-  <button onclick="navTo('screening')">A1 Screening</button>
-  <button onclick="navTo('planned')">Planned Workout</button>
-</nav>
-
-<!-- HOME -->
-<section id="home" class="active">
-  <div class="card">
-    <h2>Welcome</h2>
-    <p>This prototype includes:</p>
-    <ul>
-      <li>A1 Screening Test</li>
-      <li>Personalised Planned Workout Generator</li>
-      <li>Multi‑page navigation (single‑file app)</li>
-    </ul>
-    <button class="action" onclick="navTo('screening')">Start Screening</button>
-  </div>
-</section>
-
-<!-- SCREENING TEST -->
-<section id="screening">
-  <h2>A1 Screening Test</h2>
-  <p>Answer the questions and receive a personalised workout plan.</p>
-
-  <div class="card">
-    <label>Energy right now?</label><br>
-    <select id="energy">
-      <option value="low">Low</option>
-      <option value="medium">Medium</option>
-      <option value="high">High</option>
-    </select>
-
-    <br><br>
-    <label>Focus level?</label><br>
-    <select id="focus">
-      <option value="drifting">Drifting</option>
-      <option value="steady">Steady</option>
-      <option value="fidgety">Fidgety</option>
-    </select>
-
-    <br><br>
-    <label>Body feeling?</label><br>
-    <select id="body">
-      <option value="sluggish">Sluggish</option>
-      <option value="balanced">Balanced</option>
-      <option value="tense">Tense</option>
-    </select>
-
-    <br><br>
-    <label>Time available?</label><br>
-    <select id="time">
-      <option value="2">2 minutes</option>
-      <option value="5">5 minutes</option>
-      <option value="10">10 minutes</option>
-    </select>
-
-    <button class="action" onclick="createWorkout()">Generate Workout</button>
-  </div>
-</section>
-
-<!-- PLANNED WORKOUT -->
-<section id="planned">
-  <h2>Planned Workout</h2>
-  <p>Your personalised routine will appear here.</p>
-
-  <div id="workoutOutput"></div>
-</section>
-
-<script>
-function navTo(page) {
-  document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
-  document.getElementById(page).classList.add("active");
-  window.scrollTo(0,0);
-}
-
-function createWorkout() {
-  const energy = document.getElementById("energy").value;
-  const focus = document.getElementById("focus").value;
-  const body = document.getElementById("body").value;
-  const time = parseInt(document.getElementById("time").value);
-
-  // Decide category
-  let type = "Calm";
-
-  if (energy === "low" || body === "sluggish") type = "Wake-Up";
-  else if (focus === "drifting") type = "Focus";
-  else if (body === "tense" || energy === "high") type = "Reset";
-
-  // Exercises database
-  const routines = {
-    "Wake-Up": ["Marching", "Star Steps", "Cross‑Crawl", "Quick Feet"],
-    "Focus": ["Wall Pushes", "Figure‑8 Arms", "Toe-Heel Walk", "Balance Hold"],
-    "Reset": ["Twist & Breathe", "Forward Fold", "Band Pull‑Apart", "Step Turns"],
-    "Calm": ["Palm Press", "Shoulder Rolls", "Shape Breathing", "Grounding Press"]
-  };
-
-  // Build workout
-  const steps = routines[type].slice(0,3);
-  const minsPerStep = Math.max(1, Math.floor(time / (steps.length + 2)));
-
-  let html = `
-    <div class="plan-box">
-      <h3>${type} Routine (${time} min)</h3>
-      <div class="routine-step"><strong>Warm-up:</strong> ${steps[0]} (${minsPerStep} min)</div>
-  `;
-
-  steps.forEach(step => {
-    html += `<div class='routine-step'><strong>${step}:</strong> ${minsPerStep} min</div>`;
-  });
-
-  html += `
-      <div class="routine-step"><strong>Cool-down:</strong> ${steps[steps.length-1]} (${minsPerStep} min)</div>
+  <header>
+    <div class="wrap">
+      <h1>30‑Minute Regulation‑First Workout Planner</h1>
+      <p class="kicker">Screen quickly ➜ route to <strong>Wake Up</strong>, <strong>Focus</strong>, <strong>Reset</strong>, or <strong>Calm</strong>. Classroom‑friendly, printable, and chair‑accessible.</p>
     </div>
-  `;
+  </header>
 
-  document.getElementById("workoutOutput").innerHTML = html;
-  navTo("planned");
-}
-</script>
+  <main class="wrap grid">
+    <!-- Left: Questionnaire -->
+    <section class="card questionnaire" aria-label="Pre‑questionnaire">
+      <div class="controls-top controls">
+        <label class="opt"><input type="checkbox" id="coreOnlyToggle"> <span>Show Core 12 ⭐ only</span></label>
+        <label class="opt"><input type="checkbox" id="quietModeToggle"> <span>Quiet mode (minimal cues)</span></label>
+        <label class="opt"><input type="checkbox" id="teacherModeToggle" checked> <span>Teacher‑led demo mode</span></label>
+      </div>
 
-</body>
-</html>
+      <div class="info muted" role="note" style="margin:6px 0 12px">
+        <strong>Use:</strong> Choose options that best fit now. This tool is <em>non‑diagnostic</em> and for wellbeing/learning support. Safety gates adapt the plan when dizziness, breathlessness, or recent injury are reported.
+      </div>
+
+      <!-- A) Current State -->
+      <fieldset id="A">
+        <legend>A) Current State (Arousal, Focus, Emotion) — 10 items</legend>
+        <div class="q" data-id="A1" data-core="true">
+          <div class="meta">1. <span class="star">⭐</span> Energy right now</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="A1" value="low"> Low</label>
+            <label class="opt"><input type="radio" name="A1" value="ok"> OK</label>
+            <label class="opt"><input type="radio" name="A1" value="high"> High</label>
+          </div>
+        </div>
+        <div class="q" data-id="A2" data-core="true">
+          <div class="meta">2. <span class="star">⭐</span> Focus right now</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="A2" value="drifting"> Drifting</label>
+            <label class="opt"><input type="radio" name="A2" value="steady"> Steady</label>
+            <label class="opt"><input type="radio" name="A2" value="fidgety"> Fidgety</label>
+          </div>
+        </div>
+        <div class="q" data-id="A3" data-core="true">
+          <div class="meta">3. <span class="star">⭐</span> Motivation to move</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="A3" value="low"> Not up for it</label>
+            <label class="opt"><input type="radio" name="A3" value="med"> Could try</label>
+            <label class="opt"><input type="radio" name="A3" value="high"> Ready</label>
+          </div>
+        </div>
+        <div class="q" data-id="A4">
+          <div class="meta">4. Body feeling</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="A4" value="sluggish"> Sluggish</label>
+            <label class="opt"><input type="radio" name="A4" value="balanced"> Balanced</label>
+            <label class="opt"><input type="radio" name="A4" value="tense"> Tense</label>
+          </div>
+        </div>
+        <div class="q" data-id="A5">
+          <div class="meta">5. Emotional state</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="A5" value="flat"> Flat</label>
+            <label class="opt"><input type="radio" name="A5" value="neutral"> Neutral</label>
+            <label class="opt"><input type="radio" name="A5" value="worried"> Worried / Overwired</label>
+          </div>
+        </div>
+        <div class="q" data-id="A6">
+          <div class="meta">6. Startle/overwhelm risk if things go fast</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="A6" value="low"> Low</label>
+            <label class="opt"><input type="radio" name="A6" value="med"> Medium</label>
+            <label class="opt"><input type="radio" name="A6" value="high"> High</label>
+          </div>
+        </div>
+        <div class="q" data-id="A7">
+          <div class="meta">7. Can follow a short sequence (3 steps) now?</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="A7" value="no"> No</label>
+            <label class="opt"><input type="radio" name="A7" value="maybe"> Maybe</label>
+            <label class="opt"><input type="radio" name="A7" value="yes"> Yes</label>
+          </div>
+        </div>
+        <div class="q" data-id="A8">
+          <div class="meta">8. Comfort with being observed</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="A8" value="private"> Prefer private</label>
+            <label class="opt"><input type="radio" name="A8" value="small"> OK small group</label>
+            <label class="opt"><input type="radio" name="A8" value="class"> OK whole class</label>
+          </div>
+        </div>
+        <div class="q" data-id="A9">
+          <div class="meta">9. Preferred pace today</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="A9" value="slow"> Slow</label>
+            <label class="opt"><input type="radio" name="A9" value="moderate"> Moderate</label>
+            <label class="opt"><input type="radio" name="A9" value="lively"> Lively</label>
+          </div>
+        </div>
+        <div class="q" data-id="A10">
+          <div class="meta">10. Pain/discomfort today</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="A10" value="none"> None</label>
+            <label class="opt"><input type="radio" name="A10" value="mild"> Mild</label>
+            <label class="opt"><input type="radio" name="A10" value="noticeable"> Noticeable</label>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- B) Sensory Preferences -->
+      <fieldset id="B">
+        <legend>B) Sensory Preferences — 10 items</legend>
+        <div class="q" data-id="B11" data-core="true">
+          <div class="meta">11. <span class="star">⭐</span> Sound tolerance</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="B11" value="quiet"> Prefer quiet</label>
+            <label class="opt"><input type="radio" name="B11" value="neutral"> Neutral</label>
+            <label class="opt"><input type="radio" name="B11" value="beat"> Like a beat</label>
+          </div>
+        </div>
+        <div class="q" data-id="B12">
+          <div class="meta">12. Voice‑over tolerance</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="B12" value="minimal"> Prefer minimal words</label>
+            <label class="opt"><input type="radio" name="B12" value="neutral"> Neutral</label>
+            <label class="opt"><input type="radio" name="B12" value="guided"> Prefer guidance</label>
+          </div>
+        </div>
+        <div class="q" data-id="B13">
+          <div class="meta">13. Visual complexity</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="B13" value="low"> Low visuals</label>
+            <label class="opt"><input type="radio" name="B13" value="neutral"> Neutral</label>
+            <label class="opt"><input type="radio" name="B13" value="dynamic"> OK with dynamic visuals</label>
+          </div>
+        </div>
+        <div class="q" data-id="B14">
+          <div class="meta">14. Light sensitivity</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="B14" value="low"> Low</label>
+            <label class="opt"><input type="radio" name="B14" value="med"> Medium</label>
+            <label class="opt"><input type="radio" name="B14" value="high"> High</label>
+          </div>
+        </div>
+        <div class="q" data-id="B15" data-core="true">
+          <div class="meta">15. <span class="star">⭐</span> Touch/proprioceptive input preference</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="B15" value="gentle"> Gentle</label>
+            <label class="opt"><input type="radio" name="B15" value="neutral"> Neutral</label>
+            <label class="opt"><input type="radio" name="B15" value="strong"> Strong ("heavy work")</label>
+          </div>
+        </div>
+        <div class="q" data-id="B16">
+          <div class="meta">16. Vestibular input (turns/rocking)</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="B16" value="avoid"> Avoid</label>
+            <label class="opt"><input type="radio" name="B16" value="neutral"> Neutral</label>
+            <label class="opt"><input type="radio" name="B16" value="enjoy"> Enjoy</label>
+          </div>
+        </div>
+        <div class="q" data-id="B17">
+          <div class="meta">17. Rhythm patterns</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="B17" value="steady"> Prefer steady</label>
+            <label class="opt"><input type="radio" name="B17" value="neutral"> Neutral</label>
+            <label class="opt"><input type="radio" name="B17" value="varied"> Like varied patterns</label>
+          </div>
+        </div>
+        <div class="q" data-id="B18">
+          <div class="meta">18. Breathing work</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="B18" value="dislike"> Dislike</label>
+            <label class="opt"><input type="radio" name="B18" value="neutral"> Neutral</label>
+            <label class="opt"><input type="radio" name="B18" value="like"> Like it</label>
+          </div>
+        </div>
+        <div class="q" data-id="B19">
+          <div class="meta">19. Background noise tolerance (classroom)</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="B19" value="low"> Low</label>
+            <label class="opt"><input type="radio" name="B19" value="med"> Medium</label>
+            <label class="opt"><input type="radio" name="B19" value="high"> High</label>
+          </div>
+        </div>
+        <div class="q" data-id="B20">
+          <div class="meta">20. Screen sensitivity</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="B20" value="short"> Short bursts only</label>
+            <label class="opt"><input type="radio" name="B20" value="moderate"> OK moderate</label>
+            <label class="opt"><input type="radio" name="B20" value="long"> Fine long</label>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- C) Motor & Coordination -->
+      <fieldset id="C">
+        <legend>C) Motor & Coordination — 8 items</legend>
+        <div class="q" data-id="C21" data-core="true">
+          <div class="meta">21. <span class="star">⭐</span> Balance confidence (standing, 10s)</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="C21" value="notconf"> Not confident</label>
+            <label class="opt"><input type="radio" name="C21" value="ok"> OK</label>
+            <label class="opt"><input type="radio" name="C21" value="confident"> Confident</label>
+          </div>
+        </div>
+        <div class="q" data-id="C22">
+          <div class="meta">22. Upper body strength tolerance (push/pull)</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="C22" value="low"> Low</label>
+            <label class="opt"><input type="radio" name="C22" value="med"> Medium</label>
+            <label class="opt"><input type="radio" name="C22" value="high"> High</label>
+          </div>
+        </div>
+        <div class="q" data-id="C23">
+          <div class="meta">23. Lower body tolerance (squats/steps)</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="C23" value="low"> Low</label>
+            <label class="opt"><input type="radio" name="C23" value="med"> Medium</label>
+            <label class="opt"><input type="radio" name="C23" value="high"> High</label>
+          </div>
+        </div>
+        <div class="q" data-id="C24">
+          <div class="meta">24. Crossing midline comfort (cross crawl)</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="C24" value="hard"> Hard</label>
+            <label class="opt"><input type="radio" name="C24" value="ok"> OK</label>
+            <label class="opt"><input type="radio" name="C24" value="easy"> Easy</label>
+          </div>
+        </div>
+        <div class="q" data-id="C25">
+          <div class="meta">25. Sequencing 3–4 moves</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="C25" value="hard"> Hard</label>
+            <label class="opt"><input type="radio" name="C25" value="ok"> OK</label>
+            <label class="opt"><input type="radio" name="C25" value="easy"> Easy</label>
+          </div>
+        </div>
+        <div class="q" data-id="C26">
+          <div class="meta">26. Impact tolerance (small hops)</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="C26" value="avoid"> Avoid</label>
+            <label class="opt"><input type="radio" name="C26" value="maybe"> Maybe</label>
+            <label class="opt"><input type="radio" name="C26" value="ok"> OK</label>
+          </div>
+        </div>
+        <div class="q" data-id="C27">
+          <div class="meta">27. Range of motion limits (shoulders/hips)</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="C27" value="yes"> Yes</label>
+            <label class="opt"><input type="radio" name="C27" value="no"> No</label>
+          </div>
+        </div>
+        <div class="q" data-id="C28">
+          <div class="meta">28. Assistive/orthotic use today</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="C28" value="yes"> Yes</label>
+            <label class="opt"><input type="radio" name="C28" value="no"> No</label>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- D) Engagement & Delivery -->
+      <fieldset id="D">
+        <legend>D) Engagement & Delivery Preferences — 5 items</legend>
+        <div class="q" data-id="D29">
+          <div class="meta">29. Instruction style</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="D29" value="visual"> Visual cards</label>
+            <label class="opt"><input type="radio" name="D29" value="audio"> Audio prompts</label>
+            <label class="opt"><input type="radio" name="D29" value="live"> Live demo</label>
+          </div>
+        </div>
+        <div class="q" data-id="D30">
+          <div class="meta">30. Choice level</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="D30" value="given"> Prefer being given a plan</label>
+            <label class="opt"><input type="radio" name="D30" value="pick"> Prefer picking steps</label>
+          </div>
+        </div>
+        <div class="q" data-id="D31">
+          <div class="meta">31. Group context</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="D31" value="solo"> Solo</label>
+            <label class="opt"><input type="radio" name="D31" value="partner"> Partner</label>
+            <label class="opt"><input type="radio" name="D31" value="small"> Small group</label>
+            <label class="opt"><input type="radio" name="D31" value="class"> Whole class</label>
+          </div>
+        </div>
+        <div class="q" data-id="D32">
+          <div class="meta">32. Reward style</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="D32" value="points"> Stars/points</label>
+            <label class="opt"><input type="radio" name="D32" value="praise"> Verbal praise</label>
+            <label class="opt"><input type="radio" name="D32" value="quiet"> Quiet acknowledgement</label>
+          </div>
+        </div>
+        <div class="q" data-id="D33">
+          <div class="meta">33. Device access</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="D33" value="own"> Own device</label>
+            <label class="opt"><input type="radio" name="D33" value="shared"> Shared screen</label>
+            <label class="opt"><input type="radio" name="D33" value="none"> No device (teacher led)</label>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- E) Safety & Contraindications -->
+      <fieldset id="E">
+        <legend>E) Safety & Contraindications — 6 items</legend>
+        <div class="q" data-id="E35">
+          <div class="meta">35. Dizziness when turning</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="E35" value="never"> Never</label>
+            <label class="opt"><input type="radio" name="E35" value="sometimes"> Sometimes</label>
+            <label class="opt"><input type="radio" name="E35" value="often"> Often</label>
+          </div>
+        </div>
+        <div class="q" data-id="E36">
+          <div class="meta">36. Breathlessness with mild activity</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="E36" value="no"> No</label>
+            <label class="opt"><input type="radio" name="E36" value="sometimes"> Sometimes</label>
+            <label class="opt"><input type="radio" name="E36" value="often"> Often</label>
+          </div>
+        </div>
+        <div class="q" data-id="E37">
+          <div class="meta">37. Recent injury/strain</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="E37" value="no"> No</label>
+            <label class="opt"><input type="radio" name="E37" value="upper"> Upper</label>
+            <label class="opt"><input type="radio" name="E37" value="lower"> Lower</label>
+            <label class="opt"><input type="radio" name="E37" value="backneck"> Back/Neck</label>
+          </div>
+        </div>
+        <div class="q" data-id="E38">
+          <div class="meta">38. History of discomfort with breathing exercises</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="E38" value="no"> No</label>
+            <label class="opt"><input type="radio" name="E38" value="yes"> Yes</label>
+          </div>
+        </div>
+        <div class="q" data-id="E39">
+          <div class="meta">39. Need seated options</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="E39" value="no"> No</label>
+            <label class="opt"><input type="radio" name="E39" value="sometimes"> Sometimes</label>
+            <label class="opt"><input type="radio" name="E39" value="yes"> Yes</label>
+          </div>
+        </div>
+        <div class="q" data-id="E40">
+          <div class="meta">40. Adult support available right now</div>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="E40" value="no"> No</label>
+            <label class="opt"><input type="radio" name="E40" value="maybe"> Maybe</label>
+            <label class="opt"><input type="radio" name="E40" value="yes"> Yes</label>
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="sticky-actions">
+        <div class="controls">
+          <button class="btn" id="resetBtn" type="button">Reset</button>
+          <button class="btn primary" id="buildBtn" type="button">Generate 30‑minute plan</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right: Results -->
+    <section class="card results" aria-live="polite">
+      <h2><span class="tag"><span class="dot"></span> Planner</span> Your personalised plan appears here</h2>
+      <div id="summary" class="muted" style="margin-bottom:10px">Answer the questions and click <em>Generate</em>. Safety gates and preferences will be applied automatically.</div>
+
+      <div id="planContainer" hidden>
+        <div class="pillbar" id="routePills"></div>
+        <div class="hr"></div>
+
+        <div class="plan-section" id="warmup">
+          <h3>Warm‑up — Regulate (5 min) <small class="muted">Release tension safely</small></h3>
+          <div class="items" id="warmupList"></div>
+        </div>
+
+        <div class="plan-section" id="main">
+          <h3>Main — Regulate + Fitness (20 min) <small class="muted">Structured, controlled output</small></h3>
+          <div class="items" id="mainList"></div>
+        </div>
+
+        <div class="plan-section" id="cooldown">
+          <h3>Cool‑down — Balance (5 min) <small class="muted">Restore safety</small></h3>
+          <div class="items" id="coolList"></div>
+        </div>
+
+        <div class="build-actions controls">
+          <button class="btn good" id="printBtn" type="button">Print plan</button>
+          <button class="btn" id="copyBtn" type="button">Copy plan to clipboard</button>
+          <button class="btn" id="jsonBtn" type="button">Download JSON</button>
+        </div>
+        <div class="muted" style="font-size:.9rem">
+          <strong>Note:</strong> This planner is non‑diagnostic and for general regulation/fitness support. If pain, dizziness, or breathlessness worsen, stop and seek professional advice.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Utility helpers
+    const $ = (q,root=document) => root.querySelector(q);
+    const $$ = (q,root=document) => Array.from(root.querySelectorAll(q));
+
+    // Toggle Core 12 visibility
+    const coreToggle = $('#coreOnlyToggle');
