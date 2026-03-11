@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NeuroFit — Teacher Short‑Term Activity (12Q)</title>
+  assets/styles.css
+</head>
+
+<body>
+
+<header class="nf-header">
+  <div class="wrap flex-between">
+    index.html
+      assets/logo.svg
+      <span class="nf-title">NeuroFit</span>
+    </a>
+    <nav class="nf-nav">
+      index.htmlHome</a>
+      screening-teacher.htmlTeacher Menu</a>
+      screening-pupil.htmlPupil Swipe (Preview)</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- Intro -->
+  <section class="card nf-hero">
+    <h1>Teacher Screening — Short‑Term Activity</h1>
+    <p class="sub">
+      This fast path uses the <b>Core‑12 ⭐</b> items only.  
+      Ideal for quick regulation checks or day‑to‑day classroom planning.
+    </p>
+
+    <div class="nf-inline-stats">
+      <div class="pill">Core‑12 ⭐ items</div>
+      <div class="pill">Fast route</div>
+      <div class="pill">Pre‑Workout colour computed</div>
+    </div>
+  </section>
+
+  <!-- Screening form -->
+  <section class="card">
+    <h2 style="padding-bottom:0;">Core‑12 Questionnaire</h2>
+    <div class="body">
+
+      <!-- Progress -->
+      <div class="nf-progress-wrap" style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div id="countText" class="sub">Answered: 0 / 12</div>
+        <div style="flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;">
+          <div id="countBar" style="height:100%;width:0%;background:linear-gradient(90deg,#5CC8FF,#77FFB1);"></div>
+        </div>
+      </div>
+
+      <div id="qWrap"></div>
+
+      <div class="footer-note" style="margin-top:8px;">
+        Need a full intervention screen? screening-teacher-40.htmlUse the 40‑question version instead.</a>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="continueBtn">Continue to Workout</button>
+      <button id="clearBtn" class="secondary">Clear</button>
+    </div>
+  </section>
+
+  <!-- Notes -->
+  <section class="card">
+    <h2>Notes</h2>
+    <div class="body">
+      <ul class="nf-bullets">
+        <li>This screen uses only the ⭐ items across Domains A, B, and C.</li>
+        <li>A <b>Pre‑Workout colour</b> is automatically calculated at the end of screening.</li>
+        <li>Workout page includes a <b>Post‑Workout colour</b> reflection.</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="nf-footer">
+  <div class="wrap">
+    <span>© NeuroFit</span>
+  </div>
+</footer>
+
+assets/app.js</script>
+<script>
+  // Render only Core-12 ⭐ questions
+  const qWrap = document.getElementById('qWrap');
+  App.renderQuestions(qWrap, 'core'); // core = show only starred items
+
+  // Identify the Core‑12 from App.Q (starred items)
+  const coreItems = App.Q.filter(q => q.star);
+  const total = coreItems.length; // 12
+  const countText = document.getElementById('countText');
+  const countBar  = document.getElementById('countBar');
+
+  function updateProgress(){
+    const values = App.readAnswers();
+    const answered = coreItems.reduce((acc,q)=> acc + (values[q.id] ? 1 : 0), 0);
+    const pct = Math.round((answered / total) * 100);
+    countText.textContent = `Answered: ${answered} / ${total}`;
+    countBar.style.width = pct + '%';
+  }
+
+  qWrap.addEventListener('click', (e)=>{
+    if(e.target.matches('input[type="radio"]')) updateProgress();
+  });
+  qWrap.addEventListener('change', updateProgress);
+  updateProgress();
+
+  // Clear
+  document.getElementById('clearBtn').onclick = ()=>{
+    document.querySelectorAll('input[type="radio"]').forEach(i=> i.checked=false);
+    document.querySelectorAll('.opt').forEach(o=> o.classList.remove('selected'));
+    updateProgress();
+    window.scrollTo({top:0, behavior:'smooth'});
+  };
+
+  // Continue → validate → compute route + pre colour → send to workout
+  document.getElementById('continueBtn').onclick = ()=>{
+    const values = App.readAnswers();
+
+    // Require all Core‑12
+    const missing = coreItems.filter(q=> !values[q.id]);
+    if(missing.length){
+      alert('Please complete all 12 questions before continuing.');
+      return;
+    }
+
+    // Route
+    const { primary, tags } = App.route(values);
+
+    // Compute Pre‑Workout colour
+    const pre = App.computePreColor(values);
+    // pre = { score:?, color:'red|amber|yellow|green', label:'Red|Amber|Yellow|Green' }
+
+    // Save to session
+    sessionStorage.setItem('screeningAnswers', JSON.stringify(values));
+    sessionStorage.setItem('screeningRoute',   JSON.stringify({ primary, tags, origin:'teacher-12' }));
+    sessionStorage.setItem('preColor',         JSON.stringify(pre));
+    sessionStorage.setItem('planType',         'short-term');
+
+    // Next page
+    location.href = 'workout.html';
+  };
+</script>
+
+</body>
+</html>
