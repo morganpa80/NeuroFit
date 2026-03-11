@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NeuroFit — Teacher 6‑Week Plan (40Q)</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+
+<body>
+
+<header class="nf-header">
+  <div class="wrap flex-between">
+    <a href="index.html" class="nf-logo-wrap">
+      <img src="assets/logo.svg" alt="NeuroFit" class="nf-logo" />
+      <span class="nf-title">NeuroFit</span>
+    </a>
+    <nav class="nf-nav">
+      <a href="index.html">Home</a>
+      <a href="screening-teacher.html">Teacher Menu</a>
+      <a href="screening-pupil.html">Pupil Swipe (Preview)</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- Intro card -->
+  <section class="card nf-hero">
+    <h1>Teacher Screening — 6‑Week Plan</h1>
+    <p class="sub">
+      Complete the full 40‑question screen to generate a structured 30‑minute routine and
+      a baseline <b>Pre‑Workout Colour</b> (Green / Yellow / Amber / Red). This helps track
+      regulation across your 6‑week intervention.
+    </p>
+
+    <div class="nf-inline-stats">
+      <div class="pill">A–E Domains</div>
+      <div class="pill">40 items</div>
+      <div class="pill">Pre‑Workout colour computed</div>
+    </div>
+  </section>
+
+  <!-- Screening form card -->
+  <section class="card">
+    <h2 style="padding-bottom:0;">Screening Questionnaire (Full 40)</h2>
+    <div class="body">
+      <!-- Progress -->
+      <div class="nf-progress-wrap" style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div id="countText" class="sub">Answered: 0 / 40</div>
+        <div style="flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;">
+          <div id="countBar" style="height:100%;width:0%;background:linear-gradient(90deg,#5CC8FF,#77FFB1);"></div>
+        </div>
+      </div>
+
+      <!-- Questions render here -->
+      <div id="qWrap"></div>
+
+      <div class="footer-note" style="margin-top:8px;">
+        Tip: If time is tight, you can instead use the <a href="screening-teacher-12.html">Short‑Term Activity (12Q)</a>.
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="continueBtn" title="Save answers and build the plan">Continue to Workout</button>
+      <button id="clearBtn" class="secondary">Clear</button>
+    </div>
+  </section>
+
+  <!-- Safety / Notes -->
+  <section class="card">
+    <h2>Notes & Safety</h2>
+    <div class="body">
+      <ul class="nf-bullets">
+        <li>Non‑diagnostic screen for guiding movement‑based regulation.</li>
+        <li>Total workout time is always 30 minutes: Warm‑up 5 • Main 20 • Cool‑down 5.</li>
+        <li>Pre‑Workout colour helps pacing and delivery (e.g., quiet mode, chair mode).</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="nf-footer">
+  <div class="wrap">
+    <span>© NeuroFit</span>
+  </div>
+</footer>
+
+<!-- Shared logic -->
+<script src="assets/app.js"></script>
+<script>
+  // Render all 40 questions
+  const qWrap = document.getElementById('qWrap');
+  App.renderQuestions(qWrap, 'full'); // full = show all A–E items
+
+  // Progress counter
+  const total = App.Q.length; // 40
+  const countText = document.getElementById('countText');
+  const countBar  = document.getElementById('countBar');
+
+  function updateProgress(){
+    const values = App.readAnswers();
+    const answered = App.Q.reduce((acc,q)=> acc + (values[q.id] ? 1 : 0), 0);
+    const pct = Math.round((answered / total) * 100);
+    countText.textContent = `Answered: ${answered} / ${total}`;
+    countBar.style.width = pct + '%';
+  }
+  // Attach listeners to all radio inputs (delegated after initial render)
+  const onChange = (e)=>{ if(e.target && e.target.matches('input[type="radio"]')) updateProgress(); };
+  qWrap.addEventListener('click', onChange);
+  qWrap.addEventListener('change', onChange);
+  updateProgress();
+
+  // Clear button
+  document.getElementById('clearBtn').addEventListener('click', ()=>{
+    document.querySelectorAll('input[type="radio"]').forEach(i=> i.checked = false);
+    document.querySelectorAll('.opt').forEach(o=> o.classList.remove('selected'));
+    updateProgress();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  // Continue → validate, compute route + pre-colour, store, navigate
+  document.getElementById('continueBtn').addEventListener('click', ()=>{
+    const values = App.readAnswers();
+
+    // Require ALL 40 for this path
+    const missing = App.Q.filter(q => !values[q.id]);
+    if(missing.length){
+      alert('Please complete all 40 questions before continuing.');
+      return;
+    }
+
+    // Route (Wake Up / Focus / Reset / Calm + tags)
+    const { primary, tags } = App.route(values);
+
+    // Compute Pre‑Workout colour (score + colour + label)
+    // Implemented in assets/app.js as App.computePreColor(values)
+    const pre = App.computePreColor(values); // {score, color, label} e.g., {7,'amber','Amber'}
+
+    // Persist to session for workout page
+    sessionStorage.setItem('screeningAnswers', JSON.stringify(values));
+    sessionStorage.setItem('screeningRoute',   JSON.stringify({ primary, tags, origin:'teacher-40' }));
+    sessionStorage.setItem('preColor',         JSON.stringify(pre));
+    sessionStorage.setItem('planType',         '6-week'); // distinguish in workout UI if you wish
+
+    // Go to workout
+    location.href = 'workout.html';
+  });
+</script>
+
+</body>
+</html>
+``
