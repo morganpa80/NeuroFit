@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 64 64" fill="none">
+  <!-- Outer movement arc -->
+  <path d="M12 44c4.5 7.5 13 12 20 12 11 0 20-9 20-20 0-6-2.5-11-7-15"
+        stroke="#5CC8FF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Neural circuit node left -->
+  <circle cx="18" cy="28" r="6" fill="#5CC8FF" opacity="0.9"/>
+
+  <!-- Neural circuit node right -->
+  <circle cx="42" cy="28" r="6" fill="#77FFB1" opacity="0.9"/>
+
+  <!-- Connector line -->
+  <path d="M24 28h12" stroke="#5CC8FF" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Activation spark -->
+  <path d="M30 16l2-6 2 6"
+        stroke="#77FFB1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Small bottom spark -->
+  <path d="M30 50l2 6 2-6"
+        stroke="#5CC8FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
