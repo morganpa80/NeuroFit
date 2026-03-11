@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>NeuroFit Check‑In — Pupil Swipe</title>
+
+<!-- NeuroFit global styles -->
+assets/styles.css
+
+<style>
+/* Additional swipe-specific styling */
+.swipe-container{
+  max-width:420px;
+  margin:0 auto;
+  position:relative;
+  height:420px;
+  margin-top:20px;
+}
+
+.card-swipe{
+  position:absolute;
+  width:100%;
+  background:linear-gradient(180deg,#121520,#11131b);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 10px 30px rgba(0,0,0,.35);
+  border-radius:18px;
+  padding:24px;
+  text-align:center;
+  transition:transform .25s ease, opacity .25s ease;
+  touch-action:none;
+  user-select:none;
+}
+
+.card-swipe h2{
+  margin-top:0;
+  font-size:1.25rem;
+  line-height:1.3;
+}
+
+.swipe-options{
+  margin-top:20px;
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.swipe-opt-btn{
+  padding:10px 16px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.18);
+  background:#0f1520;
+  cursor:pointer;
+  font-size:1rem;
+}
+.swipe-opt-btn:hover{background:#162032;}
+
+#progressText{
+  text-align:center;
+  margin-top:10px;
+  color:var(--muted);
+}
+
+.progress-bar{
+  width:100%;
+  height:8px;
+  background:rgba(255,255,255,.1);
+  border-radius:999px;
+  overflow:hidden;
+  margin-top:6px;
+}
+.progress-bar-inner{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#5CC8FF,#77FFB1);
+}
+
+/* Final message card */
+.final-card{
+  text-align:center;
+  padding:30px;
+}
+</style>
+</head>
+
+<body>
+
+<header class="nf-header">
+  <div class="wrap flex-between">
+    index.html
+      assets/logo.svg
+      <span class="nf-title">NeuroFit</span>
+    </a>
+    <nav class="nf-nav">
+      index.htmlHome</a>
+      screening-teacher.htmlTeacher Mode</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="card nf-hero">
+    <h1>NeuroFit Check‑In</h1>
+    <p class="sub">
+      Swipe to answer each question.  
+      Your responses build a personalised 30‑minute routine.
+    </p>
+    <div class="pill">Swipe left or right</div>
+    <div class="pill">Core‑12 ⭐ items</div>
+  </section>
+
+  <section class="card">
+    <h2>Pupil Swipe Questions</h2>
+    <div class="body">
+
+      <!-- Progress -->
+      <div id="progressText">Question 1 / 12</div>
+      <div class="progress-bar"><div class="progress-bar-inner" id="pBar"></div></div>
+
+      <!-- Swipe area -->
+      <div class="swipe-container" id="swipeArea">
+        <!-- Cards dynamically inserted here -->
+      </div>
+
+      <div class="footer-note" style="margin-top:10px;">
+        Tap an option or swipe left/right to answer.
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="nf-footer">
+  <div class="wrap">© NeuroFit</div>
+</footer>
+
+<!-- Shared NeuroFit logic -->
+assets/app.js</script>
+
+<!-- Swipe engine -->
+assets/swipe.js</script>
+
+<script>
+// ---------------------------
+// Pupil Swipe Screening Logic
+// ---------------------------
+
+// 1) Get the Core-12 items
+const core = App.Q.filter(q => q.star);
+
+// Shuffle slightly? (Optional)
+// core.sort(() => Math.random() - 0.5);
+
+let index = 0;
+const total = core.length;
+const answers = {}; // { A1:'OK', B11:'Prefer quiet', ... }
+
+const container = document.getElementById('swipeArea');
+const pText = document.getElementById('progressText');
+const pBar  = document.getElementById('pBar');
+
+// 2) Create card DOM
+function createCard(q){
+  const card = document.createElement('div');
+  card.className='card-swipe';
+  card.innerHTML = `
+    <h2>${q.id}. ${q.label}</h2>
+    <div class="swipe-options">
+      ${q.options.map(opt => `<button class="swipe-opt-btn" data-val="${opt}">${opt}</button>`).join('')}
+    </div>
+  `;
+  return card;
+}
+
+// 3) Load first card
+loadCard();
+
+function loadCard(){
+  container.innerHTML = ''; // clear
+  const q = core[index];
+  const card = createCard(q);
+  container.appendChild(card);
+  enhanceCardWithSwipe(card, q);
+  updateProgress();
+}
+
+// 4) Swipe engine wrappers
+function enhanceCardWithSwipe(card, q){
+  SwipeCard(card, {
+    onLeft: ()=>{
+      handleAnswer(q, q.options[0]); // first option
+    },
+    onRight: ()=>{
+      handleAnswer(q, q.options[q.options.length-1]); // last option
+    }
+  });
+
+  // Tap select
+  card.querySelectorAll('.swipe-opt-btn').forEach(btn=>{
+    btn.onclick = ()=>{
+      handleAnswer(q, btn.dataset.val);
+    };
+  });
+}
+
+// 5) Handle answers
+function handleAnswer(question, value){
+  answers[question.id] = value;
+  index++;
+
+  if(index < total){
+    loadCard();
+  } else {
+    finishSwipe();
+  }
+}
+
+// 6) Update progress bar + text
+function updateProgress(){
+  pText.textContent = `Question ${index+1} / ${total}`;
+  pBar.style.width = Math.round(((index) / total) * 100) + '%';
+}
+
+// 7) Finish → store → compute → go to workout
+function finishSwipe(){
+  container.innerHTML = `
+    <div class="card-swipe final-card" style="position:relative;">
+      <h2>All Done!</h2>
+      <p>Your personalised NeuroFit plan is ready.</p>
+      <button id="goWorkoutBtn" class="swipe-opt-btn" style="margin-top:20px;">
+        Continue
+      </button>
+    </div>
+  `;
+
+  document.getElementById('goWorkoutBtn').onclick = ()=>{
+    // Compute output
+    const { primary, tags } = App.route(answers);
+    const pre = App.computePreColor(answers);
+
+    // Save to session
+    sessionStorage.setItem('screeningAnswers', JSON.stringify(answers));
+    sessionStorage.setItem('screeningRoute',   JSON.stringify({ primary, tags, origin:'pupil' }));
+    sessionStorage.setItem('preColor',         JSON.stringify(pre));
+    sessionStorage.setItem('planType',         'short-term');
+
+    // Go
+    location.href = 'workout.html';
+  };
+}
+</script>
+
+</body>
+</html>
