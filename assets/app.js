@@ -15,7 +15,7 @@
 window.App = (() => {
 
   /* ============================================================
-     1. FULL 40-QUESTION SET
+     1) FULL 40-QUESTION SET
      ============================================================ */
   const Q = [
     // ---------- A: CURRENT STATE ----------
@@ -69,7 +69,7 @@ window.App = (() => {
   ];
 
   /* ============================================================
-     2. OFFICIAL CORE‑12 SET (used by pupil + teacher‑12 screens)
+     2) OFFICIAL CORE‑12 SET (used by pupil + teacher‑12 screens)
      ============================================================ */
   const CORE12_IDS = [
     'A1','A2','A3','A4','A5',   // arousal & emotion
@@ -77,11 +77,10 @@ window.App = (() => {
     'C21','C25',                // motor
     'E35','E39'                 // safety
   ];
-
   const CORE12 = Q.filter(q => CORE12_IDS.includes(q.id));
 
   /* ============================================================
-     3. RENDER QUESTIONS (for teacher forms)
+     3) RENDER QUESTIONS (for teacher forms)
      ============================================================ */
   function renderQuestions(container, mode='full'){
     container.innerHTML = '';
@@ -89,129 +88,9 @@ window.App = (() => {
     const groups = [
       {key:'A', title:'A) Current State'},
       {key:'B', title:'B) Sensory Preferences'},
-      {key:'C', title:'C) Motor & Coordination'},
-      {key:'D', title:'D) Engagement & Delivery'},
-      {key:'E', title:'E) Safety & Contraindications'}
-    ];
-
-    groups.forEach(g=>{
-      const sec = document.createElement('section');
-      const h = document.createElement('h3');
-      h.textContent = g.title;
-      sec.appendChild(h);
-
-      Q.filter(q=>q.group===g.key).forEach(q=>{
-        const row = document.createElement('div');
-        row.className='q';
-        row.dataset.id = q.id;
-        row.innerHTML = `<label>${q.id}. ${q.label}${q.star?' ⭐':''}</label>`;
-
-        const opts = document.createElement('div'); opts.className='opts';
-
-        q.options.forEach(opt=>{
-          const lab = document.createElement('label');
-          lab.className='opt';
-          lab.innerHTML = `<input type="radio" name="${q.id}" value="${opt}">
-                           <span>${opt}</span>`;
-          lab.onclick = ()=>{
-            [...opts.children].forEach(x=>x.classList.remove('selected'));
-            lab.classList.add('selected');
-            lab.querySelector('input').checked = true;
-          };
-          opts.appendChild(lab);
-        });
-
-        row.appendChild(opts);
-        sec.appendChild(row);
-      });
-
-      container.appendChild(sec);
-    });
-
-    if(mode === 'core12'){
-      Q.forEach(q=>{
-        const row = container.querySelector(`[data-id="${q.id}"]`);
-        if(row) row.style.display = CORE12_IDS.includes(q.id) ? '' : 'none';
-      });
-    }
-  }
-
-  /* ============================================================
-     4. READ ANSWERS
-     ============================================================ */
-  function readAnswers(){
-    const v = {};
-    Q.forEach(q=>{
-      const el = document.querySelector(`input[name="${q.id}"]:checked`);
-      v[q.id] = el ? el.value : null;
-    });
-    return v;
-  }
-
-  /* ============================================================
-     5. ROUTING (Primary type + tags)
-     ============================================================ */
-  function route(v){
-    const tags = new Set();
-
-    if(['Sometimes','Often'].includes(v.E35)) tags.add('no-vestibular');
-    if(v.E39 === 'Yes') tags.add('chair-mode');
-    if(v.B11 === 'Prefer quiet' || v.B19 === 'Low') tags.add('low-noise');
-    if(v.B13 === 'Low visuals') tags.add('low-visual');
-    if(v.B15?.includes('Strong') && v.C22 === 'High') tags.add('heavy-work');
-    if(v.B18 === 'Dislike' || v.E38 === 'Yes') tags.add('no-breath-cues');
-    if(v.B20 === 'Short bursts only' || v.A3 === 'Not up for it') tags.add('short-bursts');
-
-    let primary = 'Calm';
-    if(v.A1 === 'Low' || v.A4 === 'Sluggish') primary='Wake Up';
-    else if(v.A2 === 'Drifting') primary='Focus';
-    else if(v.A2 === 'Fidgety' || v.A4 === 'Tense' || v.A6 === 'High') primary='Reset';
-    if(v.A5 === 'Worried/Overwired') primary='Calm';
-
-    return {primary, tags:[...tags]};
-  }
-
-  /* ============================================================
-     6. PRE‑WORKOUT COLOUR SCORING
-     ============================================================ */
-  function computePreColor(v){
-    let score = 0;
-
-    if(v.A1 === 'Low' || v.A4 === 'Sluggish' || v.A4 === 'Tense') score+=2;
-    if(v.A2 === 'Drifting' || v.A2 === 'Fidgety') score+=2;
-    if(v.A6 === 'High') score+=2;
-
-    if(v.B11 === 'Prefer quiet') score++;
-    if(v.B13 === 'Low visuals') score++;
-    if(v.B19 === 'Low') score++;
-
-    if(v.C21 === 'Not confident') score++;
-
-    if(v.B18 === 'Dislike' || v.E38 === 'Yes') score++;
-
-    if(v.E35 !== 'Never' || v.E36 !== 'No') score++;
-
-    let color='yellow', label='Yellow';
-    if(score<=2){ color='green'; label='Green'; }
-    else if(score<=4){ color='yellow'; label='Yellow'; }
-    else if(score<=7){ color='amber'; label='Amber'; }
-    else { color='red'; label='Red'; }
-
-    return {score,color,label};
-  }
-
-  /* ============================================================
-     7. EXERCISE BANK
-     ============================================================ */
-
-  const BANK = {
-    warmup:{ /* same as delivered earlier */ },
-    main:{ /* same as delivered earlier */ },
-    cooldown:{ /* same as delivered earlier */ }
-  };
-
-  /* ============================================================
-     8. BUILD 30-MINUTE PLAN
+      {key:'C', title:'C)
+         /* ============================================================
+     8) BUILD 30-MINUTE PLAN
      ============================================================ */
   function buildPlanDOM({primary, tags}) {
     const chair = tags.includes('chair-mode');
@@ -238,43 +117,39 @@ window.App = (() => {
       return b;
     }
 
-    // warm‑up
+    // WARM‑UP
     wrap.appendChild(block('Warm‑up — Regulate', 5, [
       ...BANK.warmup.common,
       ...(BANK.warmup[primary==='Wake Up'?'wake':primary.toLowerCase()]||[])
     ]));
 
-    // main
+    // MAIN
     const m = document.createElement('div');
     m.className='block';
     m.innerHTML = `<div class="title"><span>Main — Regulate + Fitness</span><span>20 min</span></div>`;
     BANK.main[primary].forEach(sec=>{
-      const h3=document.createElement('h3'); h3.textContent=sec.title;
-      m.appendChild(h3);
-      const s=document.createElement('div'); s.className='notes'; s.textContent=sec.suggestion;
-      m.appendChild(s);
+      const h3=document.createElement('h3'); h3.textContent=sec.title; m.appendChild(h3);
+      const s=document.createElement('div'); s.className='notes'; s.textContent=sec.suggestion; m.appendChild(s);
       const ul=document.createElement('ul'); ul.className='ex';
       sec.list.forEach(i=>{
-        let nm=i.name;
-        if(chair && i.chair) nm+=` (chair: ${i.chair})`;
+        let nm=i.name; if(chair && i.chair) nm+=` (chair: ${i.chair})`;
         ul.innerHTML+=`<li>${nm}${i.cues?' — '+i.cues:''}</li>`;
       });
       m.appendChild(ul);
     });
     wrap.appendChild(m);
 
-    // cool‑down
+    // COOL‑DOWN
     const cool = noBreath
       ? [...BANK.cooldown.common, ...BANK.cooldown.movement]
       : [...BANK.cooldown.common, ...BANK.cooldown.breath];
-
     wrap.appendChild(block('Cool‑down — Balance', 5, cool));
 
     return wrap;
   }
 
   /* ============================================================
-     9. 10‑MIN TRIAGE
+     9) 10‑MIN TRIAGE
      ============================================================ */
   function triagePlan({state, quiet=false, chair=false}){
     let primary = state==='overloaded' ? 'Calm'
@@ -333,7 +208,7 @@ window.App = (() => {
   }
 
   /* ============================================================
-     10. FEEDBACK STORAGE
+     10) FEEDBACK STORAGE
      ============================================================ */
   function saveFeedback({rating, comment, primary, tags}){
     const key='neurofitFeedback';
@@ -395,3 +270,4 @@ window.App = (() => {
   };
 
 })();
+``
