@@ -4,24 +4,25 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>NeuroFit — Workout Plan</title>
+
+  <!-- NeuroFit styles -->
   <link rel="stylesheet" href="assets/styles.css" />
+
   <style>
-    /* Small page-specific touches for the colour gauge and post reflection */
-    .precheck {
-      display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin:8px 0 6px;
-    }
-    .gauge {
-      display:inline-flex; align-items:center; gap:8px;
-      padding:6px 10px; border-radius:999px; font-weight:700; color:#051014;
-    }
+    /* Page-specific touches for the colour gauge and post reflection */
+    .precheck { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin:8px 0 6px; }
+    .gauge { display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; font-weight:700; color:#051014; }
     .g-red    { background:#ff7d7d; }
     .g-amber  { background:#ffb56a; }
     .g-yellow { background:#ffe66a; }
     .g-green  { background:#77ffb1; }
 
-    .legend { display:flex; gap:6px; align-items:center; color:var(--muted); font-size:.9rem; flex-wrap:wrap }
+    .legend { display:flex; gap:8px; align-items:center; color:var(--muted); font-size:.9rem; flex-wrap:wrap }
     .dot { width:10px; height:10px; border-radius:50% }
     .d-red{background:#ff7d7d}.d-amber{background:#ffb56a}.d-yellow{background:#ffe66a}.d-green{background:#77ffb1}
+
+    .plan-meta { display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 }
+    .pill.blue { border-color:#5CC8FF; }
 
     .color-row{display:flex; gap:8px; flex-wrap:wrap; margin:8px 0}
     .color-tile{
@@ -39,8 +40,9 @@
     .emoji.selected{filter:none; transform:scale(1.05)}
     .toggle-emoji{margin-left:8px}
 
-    .plan-meta { display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 }
-    .pill.blue { border-color:#5CC8FF; }
+    @media print{
+      .post, .toggle-emoji, #emojiToggle { display:none !important; }
+    }
   </style>
 </head>
 
@@ -48,14 +50,15 @@
 
 <header class="nf-header">
   <div class="wrap flex-between">
-    <a class="nf-logo-wrap" href="index.html" style="text-decoration:none;">
-      <img src="assets/logo.svg" alt="NeuroFit" height="26" />
+    <a href="index.html" class="nf-logo-wrap" aria-label="NeuroFit home">
+      <img src="assets/logo.svg" alt="" width="28" height="28" />
       <span class="nf-title">NeuroFit</span>
     </a>
-    <nav class="nf-nav">
+
+    <nav class="nf-nav" aria-label="Primary">
       <a href="index.html">Home</a>
       <a href="screening-teacher.html">Teacher Menu</a>
-      <a href="screening-pupil.html">Pupil Swipe</a>
+      <a href="screening-pupil.html">Pupil Check‑In</a>
     </nav>
   </div>
 </header>
@@ -63,23 +66,19 @@
 <main class="wrap">
 
   <!-- PLAN CARD -->
-  <section class="card">
-    <h2 style="padding-bottom:0;">Your 30‑Minute Plan</h2>
+  <section class="card" aria-labelledby="plan-title">
+    <h2 id="plan-title" style="padding-bottom:0;">Your 30‑Minute Plan</h2>
     <div class="body">
 
       <!-- Pre‑Workout colour & meta -->
-      <div class="precheck" id="preWrap">
-        <!-- Filled by JS -->
-      </div>
+      <div class="precheck" id="preWrap" aria-live="polite"></div>
 
-      <div class="plan-meta" id="planMeta">
-        <!-- Filled by JS: Primary, tags, plan type -->
-      </div>
+      <div class="plan-meta" id="planMeta"></div>
 
       <!-- Actions -->
       <div class="actions">
         <button id="printBtn">Print</button>
-        <a id="editBtn" class="btn secondary" href="#" style="text-decoration:none; display:inline-block; padding:10px 14px; border-radius:10px;">Edit Answers</a>
+        <a id="editBtn" class="ghost" href="screening-teacher.html">Edit Answers</a>
       </div>
 
       <!-- Generated plan -->
@@ -88,15 +87,15 @@
   </section>
 
   <!-- POST‑WORKOUT REFLECTION -->
-  <section class="card">
-    <h2>How do you feel now?</h2>
+  <section class="card post" aria-labelledby="post-title">
+    <h2 id="post-title">How do you feel now?</h2>
     <div class="body">
 
       <div class="color-row" id="colorRow">
-        <div class="color-tile" data-color="green"  title="Green — Ready / Regulated">🟩 Green</div>
-        <div class="color-tile" data-color="yellow" title="Yellow — Mild dysregulation">🟨 Yellow</div>
-        <div class="color-tile" data-color="amber"  title="Amber — Moderate dysregulation">🟧 Amber</div>
-        <div class="color-tile" data-color="red"    title="Red — High dysregulation">🟥 Red</div>
+        <div class="color-tile" data-color="green"  title="Green — Ready / Regulated" aria-label="Green">🟩 Green</div>
+        <div class="color-tile" data-color="yellow" title="Yellow — Mild dysregulation" aria-label="Yellow">🟨 Yellow</div>
+        <div class="color-tile" data-color="amber"  title="Amber — Moderate dysregulation" aria-label="Amber">🟧 Amber</div>
+        <div class="color-tile" data-color="red"    title="Red — High dysregulation" aria-label="Red">🟥 Red</div>
       </div>
 
       <label class="toggle-emoji">
@@ -106,170 +105,4 @@
       <div class="emoji-row" id="emojiRow" aria-label="Emoji rating">
         <span class="emoji" data-map="green"  title="Green">😄</span>
         <span class="emoji" data-map="yellow" title="Yellow">🙂</span>
-        <span class="emoji" data-map="amber"  title="Amber">😕</span>
-        <span class="emoji" data-map="red"    title="Red">😣</span>
-      </div>
-
-      <div style="margin-top:10px;">
-        <label for="fbText">Notes (optional):</label>
-        <textarea id="fbText" rows="3" style="width:100%; margin-top:6px;" placeholder="Anything to record about today’s session…"></textarea>
-      </div>
-
-      <div class="actions">
-        <button id="saveFeedbackBtn">Save Feedback</button>
-        <button id="exportCSVBtn" class="secondary">Export CSV</button>
-      </div>
-
-      <div class="footer-note">
-        Feedback saves locally on this device. For central collection, set a Power Automate HTTP endpoint in <code>assets/app.js → App.postFeedback()</code>.
-      </div>
-
-      <div class="footer-note" style="margin-top:8px;">
-        Colour scale: <span class="dot d-green"></span> Green (0–2) · <span class="dot d-yellow"></span> Yellow (3–4) · <span class="dot d-amber"></span> Amber (5–7) · <span class="dot d-red"></span> Red (8–10)
-      </div>
-
-    </div>
-  </section>
-
-</main>
-
-<footer class="nf-footer">
-  <div class="wrap">
-    <span>© NeuroFit</span>
-  </div>
-</footer>
-
-<script src="assets/app.js"></script>
-<script>
-(() => {
-  const planEl = document.getElementById('plan');
-  const preWrap = document.getElementById('preWrap');
-  const planMeta = document.getElementById('planMeta');
-  const editBtn = document.getElementById('editBtn');
-
-  // Read session data
-  const routeRaw = sessionStorage.getItem('screeningRoute');
-  const answersRaw = sessionStorage.getItem('screeningAnswers');
-  const preRaw    = sessionStorage.getItem('preColor');
-  const planType  = sessionStorage.getItem('planType') || 'short-term';
-
-  if(!routeRaw || !answersRaw || !preRaw){
-    planEl.innerHTML = '<div class="notes">No screening data found. <a href="index.html">Start again</a>.</div>';
-    return;
-  }
-
-  const route = JSON.parse(routeRaw); // { primary, tags, origin }
-  const answers = JSON.parse(answersRaw);
-  const pre = JSON.parse(preRaw);     // { score, color, label }
-
-  // Build and render the plan
-  const dom = App.buildPlanDOM({ primary: route.primary, tags: route.tags || [] });
-  planEl.appendChild(dom);
-
-  // Pre‑workout colour display
-  const colorClass = {
-    red: 'g-red', amber: 'g-amber', yellow: 'g-yellow', green: 'g-green'
-  }[pre.color] || 'g-yellow';
-
-  preWrap.innerHTML = `
-    <div class="gauge ${colorClass}" title="Pre‑Workout ${pre.label} (score ${pre.score})">
-      <span>PRE:</span> <span>${pre.label}</span>
-    </div>
-    <div class="legend">
-      <span class="dot d-green"></span>Green
-      <span class="dot d-yellow"></span>Yellow
-      <span class="dot d-amber"></span>Amber
-      <span class="dot d-red"></span>Red
-    </div>
-  `;
-
-  // Meta info (Primary, tags, planType)
-  const tags = route.tags || [];
-  planMeta.innerHTML = `
-    <span class="pill blue"><b>Primary:</b> ${route.primary}</span>
-    ${tags.length ? `<span class="pill">${tags.join(' · ')}</span>` : ''}
-    <span class="pill">${planType === '6-week' ? '6‑Week Plan' : 'Short‑Term Activity'}</span>
-    ${route.origin ? `<span class="pill">From: ${route.origin}</span>` : ''}
-  `;
-
-  // Edit answers link based on origin
-  const origin = route.origin || '';
-  let backHref = 'screening-teacher.html';
-  if(origin === 'pupil') backHref = 'screening-pupil.html';
-  else if(origin === 'teacher-12') backHref = 'screening-teacher-12.html';
-  else if(origin === 'teacher-40') backHref = 'screening-teacher-40.html';
-  editBtn.href = backHref;
-
-  // Print
-  document.getElementById('printBtn').onclick = () => window.print();
-
-  // POST‑WORKOUT reflection (colour OR emoji → maps to colour)
-  let postColor = null;
-
-  // Colour tiles
-  document.querySelectorAll('.color-tile').forEach(tile=>{
-    tile.addEventListener('click', ()=>{
-      document.querySelectorAll('.color-tile').forEach(t=>t.classList.remove('selected'));
-      tile.classList.add('selected');
-      postColor = tile.dataset.color; // 'green' | 'yellow' | 'amber' | 'red'
-      // Clear emoji selection if any
-      document.querySelectorAll('.emoji').forEach(e=>e.classList.remove('selected'));
-    });
-  });
-
-  // Emoji toggle & selection
-  const emojiToggle = document.getElementById('emojiToggle');
-  const emojiRow = document.getElementById('emojiRow');
-  emojiToggle.addEventListener('change', ()=>{
-    emojiRow.style.display = emojiToggle.checked ? 'flex' : 'none';
-  });
-
-  document.querySelectorAll('.emoji').forEach(e=>{
-    e.addEventListener('click', ()=>{
-      document.querySelectorAll('.emoji').forEach(x=>x.classList.remove('selected'));
-      e.classList.add('selected');
-      postColor = e.dataset.map; // map to green/yellow/amber/red
-      // Clear colour tile selection if any
-      document.querySelectorAll('.color-tile').forEach(t=>t.classList.remove('selected'));
-    });
-  });
-
-  // Save feedback locally (and optionally POST upstream)
-  document.getElementById('saveFeedbackBtn').addEventListener('click', async ()=>{
-    if(!postColor){
-      alert('Please select how you feel now (a colour or an emoji).');
-      return;
-    }
-    const comment = document.getElementById('fbText').value;
-    const payload = {
-      rating: postColor,               // save the colour keyword
-      comment,
-      primary: route.primary,
-      tags: tags,
-      pre: pre,                        // include pre colour object
-      origin,                          // pupil / teacher-12 / teacher-40
-      planType                         // 6-week / short-term
-    };
-
-    // Local save
-    App.saveFeedback({
-      rating: postColor,
-      comment,
-      primary: route.primary,
-      tags
-    });
-
-    // Optional: POST to Power Automate / webhook (set URL in assets/app.js)
-    // const ok = await App.postFeedback('https://YOUR-POWER-AUTOMATE-HTTP-URL', payload);
-
-    alert('Feedback saved on this device.');
-  });
-
-  // Export CSV of all local feedback
-  document.getElementById('exportCSVBtn').addEventListener('click', App.exportFeedbackCSV);
-})();
-</script>
-
-</body>
-</html>
-``
+        <span
