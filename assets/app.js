@@ -88,8 +88,241 @@ window.App = (() => {
     const groups = [
       {key:'A', title:'A) Current State'},
       {key:'B', title:'B) Sensory Preferences'},
-      {key:'C', title:'C)
-         /* ============================================================
+      {key:'C', title:'C) Motor & Coordination'},
+      {key:'D', title:'D) Engagement & Delivery'},
+      {key:'E', title:'E) Safety & Contraindications'}
+    ];
+
+    groups.forEach(g=>{
+      const sec = document.createElement('section');
+      const h = document.createElement('h3');
+      h.textContent = g.title;
+      sec.appendChild(h);
+
+      Q.filter(q=>q.group===g.key).forEach(q=>{
+        const row = document.createElement('div');
+        row.className='q';
+        row.dataset.id = q.id;
+        row.innerHTML = `<label>${q.id}. ${q.label}${q.star?' ⭐':''}</label>`;
+
+        const opts = document.createElement('div'); opts.className='opts';
+        q.options.forEach(opt=>{
+          const lab = document.createElement('label');
+          lab.className='opt';
+          lab.innerHTML = `<input type="radio" name="${q.id}" value="${opt}"><span>${opt}</span>`;
+          lab.onclick = ()=>{
+            [...opts.children].forEach(x=>x.classList.remove('selected'));
+            lab.classList.add('selected');
+            lab.querySelector('input').checked = true;
+          };
+          opts.appendChild(lab);
+        });
+
+        row.appendChild(opts);
+        sec.appendChild(row);
+      });
+
+      container.appendChild(sec);
+    });
+
+    if(mode === 'core12'){
+      Q.forEach(q=>{
+        const row = container.querySelector(`[data-id="${q.id}"]`);
+        if(row) row.style.display = CORE12_IDS.includes(q.id) ? '' : 'none';
+      });
+    }
+  }
+
+  /* ============================================================
+     4) READ ANSWERS
+     ============================================================ */
+  function readAnswers(){
+    const v = {};
+    Q.forEach(q=>{
+      const el = document.querySelector(`input[name="${q.id}"]:checked`);
+      v[q.id] = el ? el.value : null;
+    });
+    return v;
+  }
+
+  /* ============================================================
+     5) ROUTING (Primary type + tags)
+     ============================================================ */
+  function route(v){
+    const tags = new Set();
+
+    if(['Sometimes','Often'].includes(v.E35)) tags.add('no-vestibular');
+    if(v.E39 === 'Yes') tags.add('chair-mode');
+    if(v.B11 === 'Prefer quiet' || v.B19 === 'Low') tags.add('low-noise');
+    if(v.B13 === 'Low visuals') tags.add('low-visual');
+    if(v.B15?.includes('Strong') && v.C22 === 'High') tags.add('heavy-work');
+    if(v.B18 === 'Dislike' || v.E38 === 'Yes') tags.add('no-breath-cues');
+    if(v.B20 === 'Short bursts only' || v.A3 === 'Not up for it') tags.add('short-bursts');
+
+    let primary = 'Calm';
+    if(v.A1 === 'Low' || v.A4 === 'Sluggish') primary='Wake Up';
+    else if(v.A2 === 'Drifting') primary='Focus';
+    else if(v.A2 === 'Fidgety' || v.A4 === 'Tense' || v.A6 === 'High') primary='Reset';
+    if(v.A5 === 'Worried/Overwired') primary='Calm';
+
+    return {primary, tags:[...tags]};
+  }
+
+  /* ============================================================
+     6) PRE‑WORKOUT COLOUR SCORING (0–10 → Green/Yellow/Amber/Red)
+     ============================================================ */
+  function computePreColor(v){
+    let score = 0;
+
+    if(v.A1 === 'Low' || v.A4 === 'Sluggish' || v.A4 === 'Tense') score+=2;
+    if(v.A2 === 'Drifting' || v.A2 === 'Fidgety') score+=2;
+    if(v.A6 === 'High') score+=2;
+
+    if(v.B11 === 'Prefer quiet') score++;
+    if(v.B13 === 'Low visuals') score++;
+    if(v.B19 === 'Low') score++;
+
+    if(v.C21 === 'Not confident') score++;
+
+    if(v.B18 === 'Dislike' || v.E38 === 'Yes') score++;
+
+    if(v.E35 !== 'Never' || v.E36 !== 'No') score++;
+
+    let color='yellow', label='Yellow';
+    if(score<=2){ color='green'; label='Green'; }
+    else if(score<=4){ color='yellow'; label='Yellow'; }
+    else if(score<=7){ color='amber'; label='Amber'; }
+    else { color='red'; label='Red'; }
+
+    return {score,color,label};
+  }
+
+  /* ============================================================
+     7) EXERCISE BANK (COMPLETE)
+     ============================================================ */
+  const BANK = {
+    warmup:{
+      common:[
+        {name:'Forearm press + slow exhale (5×)', cues:'Strong hands, long slow exhale.', chair:'Same seated'},
+        {name:'Shoulder roll + shake out (8–10s)', cues:'Release neck & jaw.', chair:'Same seated'},
+        {name:'Slow step backs ×10', cues:'Soft feet.', chair:'Seated march ×20'}
+      ],
+      wake:[
+        {name:'Power march (60s)', cues:'Steady arms.', chair:'Seated march', quiet:true}
+      ],
+      focus:[
+        {name:'Cross‑crawl slow (30–45s)', cues:'Opp hand to knee.', chair:'Seated cross‑crawl'}
+      ],
+      reset:[
+        {name:'Wall angels (5–6)', cues:'Slide + slow breath.', chair:'Seated wall slides'}
+      ],
+      calm:[
+        {name:'Hand‑press thighs (5×5s)', cues:'Press–release.', chair:'Same seated'}
+      ]
+    },
+
+    main:{
+      "Wake Up":[
+        {
+          title:'Energise Circuit (×2)',
+          suggestion:'Goal: Lift energy without chaos.',
+          list:[
+            {name:'Power march / step‑ups (60–90s)', cues:'Steady, not bouncy.', chair:'Sit‑to‑stand or march'},
+            {name:'Wall push‑ups (8–12)', cues:'Strong & steady.', chair:'Incline variant'},
+            {name:'Glute bridge hold (15–20s)', cues:'Drive heels.', chair:'Seated band pull‑apart ×10'}
+          ]
+        },
+        {
+          title:'Steady Strength',
+          suggestion:'Goal: Activate large muscles.',
+          list:[
+            {name:'Hip hinge ×10', cues:'Long spine.', chair:'Seated hinge'},
+            {name:'Carry: backpack/tote (60s)', cues:'Walk tall.', chair:'Seated thigh press 5×5s'}
+          ]
+        }
+      ],
+      "Focus":[
+        {
+          title:'Pattern Ladder (×2)',
+          suggestion:'Goal: Steady beat for attention.',
+          list:[
+            {name:'3‑move combo ×4', cues:'Keep rhythm.', chair:'Seated march→press→twist'},
+            {name:'Isometric squat (10–20s)', cues:'Track toes.', chair:'Knee squeeze'},
+            {name:'Wall plank (20–30s)', cues:'Push floor.', chair:'Desk push'}
+          ]
+        },
+        {
+          title:'Heavy Work Focus',
+          suggestion:'Goal: Organise via muscle pressure.',
+          list:[
+            {name:'Towel row ×10', cues:'Elbows back.', chair:'Same seated'},
+            {name:'Slow climbers (20–30s)', cues:'Controlled.', chair:'Seated knee lifts'}
+          ]
+        }
+      ],
+      "Reset":[
+        {
+          title:'Grounded Power Circuit (×2)',
+          suggestion:'Goal: Heavy + slow grounding.',
+          list:[
+            {name:'Slow bear walk (6–8)', cues:'Heavy limbs.', chair:'Cross‑press 5×5s'},
+            {name:'Wall push‑ups (8–10)', cues:'Exhale on push.', chair:'Incline variant'},
+            {name:'Glute bridge hold (10–15s)', cues:'Strong heels.', chair:'Hamstring press 5×5s'}
+          ]
+        },
+        {
+          title:'Controlled Strength + Breath',
+          suggestion:'Goal: Strong body → calmer mind.',
+          list:[
+            {name:'Slow climbers (20–30s)', cues:'Slow pace.', chair:'Seated lifts ×20'},
+            {name:'Isometric squat (10–15s)', cues:'Steady.', chair:'Quad set 5×5s'}
+          ]
+        },
+        {
+          title:'Down‑shift Movement',
+          suggestion:'Goal: Signal calming.',
+          list:[
+            {name:'Forward fold (20s)', cues:'Soft knees.', chair:'Seated fold'},
+            {name:'Figure‑four stretch', cues:'Gentle.', chair:'Seated version'}
+          ]
+        }
+      ],
+      "Calm":[
+        {
+          title:'Slow Flow (×2)',
+          suggestion:'Goal: Down‑shift pacing.',
+          list:[
+            {name:'Cat‑cow (60–90s)', cues:'Move with breath.', chair:'Seated cat‑cow'},
+            {name:'Wall slide (5–6)', cues:'Smooth.', chair:'Seated wall slide'},
+            {name:'Towel squeeze (5×5s)', cues:'Press‑release.', chair:'Same seated'}
+          ]
+        },
+        {
+          title:'Lengthen + Ground',
+          suggestion:'Goal: Longer muscles = calmer system.',
+          list:[
+            {name:'Lunge rocks (30–45s)', cues:'Small range.', chair:'Seated ankle pump'},
+            {name:'Chest opener 20s', cues:'Ease shoulders.', chair:'Seated open‑book'}
+          ]
+        }
+      ]
+    },
+
+    cooldown:{
+      common:[
+        {name:'Slow wall slides (5–6)', cues:'Smooth lower–lift.', chair:'Seated wall slide'}
+      ],
+      breath:[
+        {name:'4–7–8 breathing ×2', cues:'In4•Hold7•Out8', chair:'Same seated'}
+      ],
+      movement:[
+        {name:'Box reach ×2', cues:'Wide slow reach.', chair:'Seated reach'},
+        {name:'Neck ease (5× each)', cues:'Gentle.', chair:'Same seated'}
+      ]
+    }
+  };
+
+  /* ============================================================
      8) BUILD 30-MINUTE PLAN
      ============================================================ */
   function buildPlanDOM({primary, tags}) {
@@ -270,4 +503,3 @@ window.App = (() => {
   };
 
 })();
-``
