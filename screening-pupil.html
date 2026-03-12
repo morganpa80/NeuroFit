@@ -1,60 +1,12 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>NeuroFit Check‑In — Pupil (Click Mode)</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NeuroFit — Teacher Short‑Term Activity (Core‑12)</title>
 
-<link rel="stylesheet" href="assets/styles.css" />
-
-<style>
-/* Page-specific styles for click-based heart/cross UI */
-.pupil-wrap { max-width:560px; margin:0 auto; }
-
-.pupil-card {
-  background:linear-gradient(180deg,#121520,#11131b);
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:18px;
-  box-shadow:0 10px 30px rgba(0,0,0,.35);
-  padding:22px 18px;
-  text-align:center;
-}
-.pupil-question {
-  font-size:1.15rem;
-  line-height:1.35;
-  margin:8px 0 6px;
-  min-height:3.2rem;
-}
-.pupil-sub { color:var(--muted); font-size:.95rem; }
-
-.pupil-controls {
-  display:flex; align-items:center; justify-content:center; gap:14px; margin:12px 0 4px;
-}
-.bigbtn {
-  width:84px; height:84px; border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  font-size:36px; cursor:pointer; user-select:none; border:2px solid transparent;
-  transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
-}
-.bigbtn:hover { transform:translateY(-1px); }
-.bigbtn:active { transform:translateY(0); }
-
-.big-cross { background:#2a1520; border-color:#ff7d7d44; }
-.big-heart { background:#14242e; border-color:#5CC8FF44; }
-.big-mid   { background:#1c1f2a; border-color:#ffffff22; width:70px; height:70px; font-size:22px; }
-
-.pupil-labels { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:6px; }
-.lab {
-  padding:4px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.18); font-size:.85rem; color:var(--muted);
-}
-
-.pupil-progress { text-align:center; margin:10px 0 6px; color:var(--muted); }
-.pbar { width:100%; height:8px; background:rgba(255,255,255,.1); border-radius:999px; overflow:hidden; }
-.pbar-inner { height:100%; width:0%; background:linear-gradient(90deg,#5CC8FF,#77FFB1); }
-
-.final-btn { margin-top:14px; padding:10px 16px; border-radius:12px; border:1px solid rgba(255,255,255,.18); background:#0f1520; cursor:pointer; }
-.final-btn:hover { background:#162032; }
-</style>
+  <!-- NeuroFit styles -->
+  <link rel="stylesheet" href="assets/styles.css" />
 </head>
 
 <body>
@@ -62,158 +14,146 @@
 <header class="nf-header">
   <div class="wrap flex-between">
     <a href="index.html" class="nf-logo-wrap">
-      <img src="assets/logo.svg" alt="" width="28" height="28" />
+      <img src="assets/logo.svg" alt="NeuroFit logo" width="32" height="32" />
       <span class="nf-title">NeuroFit</span>
     </a>
-    <nav class="nf-nav">
+    <nav class="nf-nav" aria-label="Primary">
       <a href="index.html">Home</a>
-      <a href="screening-teacher.html">Teacher Mode</a>
+      <a href="screening-teacher.html">Teacher Menu</a>
+      <a href="screening-pupil.html">Pupil Check‑In (Preview)</a>
     </nav>
   </div>
 </header>
 
-<main class="wrap pupil-wrap">
+<main class="wrap">
 
-  <section class="card nf-hero" style="text-align:center">
-    <h1>NeuroFit Check‑In</h1>
-    <p class="sub">Tap ❌ for the left choice, ❤️ for the right choice. If you see a middle dot, it’s the “in‑between” option.</p>
-    <div class="pill">Core quick screen</div>
+  <!-- Intro -->
+  <section class="card nf-hero">
+    <h1>Short‑Term Activity Screening (Core‑12)</h1>
+    <p class="sub">This is the official Core‑12 set used for fast regulation checks (same for Pupils & Teachers).</p>
+
+    <!-- CORE-12 VISUAL LIST -->
+    <div style="margin-top:14px; text-align:left; max-width:440px; margin-left:auto; margin-right:auto;">
+      <strong>Core‑12 Items:</strong>
+      <ul class="nf-bullets">
+        <li>A1 — Energy</li>
+        <li>A2 — Focus</li>
+        <li>A3 — Motivation</li>
+        <li>A4 — Body Feeling</li>
+        <li>A5 — Emotional State</li>
+        <li>B11 — Sound Tolerance</li>
+        <li>B15 — Proprioceptive Preference</li>
+        <li>B16 — Vestibular Preference</li>
+        <li>C21 — Balance Confidence</li>
+        <li>C25 — Sequencing 3–4 Moves</li>
+        <li>E35 — Dizziness When Turning</li>
+        <li>E39 — Need Seated Options</li>
+      </ul>
+    </div>
+
+    <div class="nf-inline-stats" style="margin-top:8px;">
+      <div class="pill">Core‑12</div>
+      <div class="pill">Pre‑Workout colour computed</div>
+      <div class="pill">Fast route to plan</div>
+    </div>
   </section>
 
+  <!-- Screening form -->
   <section class="card">
-    <h2>Pupil Questions</h2>
+    <h2>Core‑12 Questionnaire</h2>
     <div class="body">
 
-      <!-- progress -->
-      <div class="pupil-progress">
-        <span id="pText">Question 1 / 12</span>
-        <div class="pbar"><div class="pbar-inner" id="pBar"></div></div>
+      <!-- Progress -->
+      <div class="nf-progress-wrap" style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div id="countText" class="sub">Answered: 0 / 12</div>
+        <div style="flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;">
+          <div id="countBar" class="progress-bar-inner" style="width:0%"></div>
+        </div>
       </div>
 
-      <!-- interactive card -->
-      <div class="pupil-card" id="qCard" aria-live="polite">
-        <!-- Populated by JS -->
-      </div>
+      <div id="qWrap"></div>
 
-      <div class="footer-note" style="margin-top:10px;">
-        Keyboard: ← = ❌ &nbsp;•&nbsp; ↑ = • &nbsp;•&nbsp; → = ❤️
+      <div class="footer-note" style="margin-top:8px;">
+        Need the full profile instead? Try the
+        <a href="screening-teacher-40.html">40‑question screen</a>.
       </div>
+    </div>
 
+    <div class="actions">
+      <button id="continueBtn">Continue to Workout</button>
+      <button id="clearBtn" class="secondary">Clear</button>
     </div>
   </section>
 
 </main>
 
 <footer class="nf-footer">
-  <div class="wrap">© NeuroFit</div>
+  <div class="wrap">
+    © NeuroFit
+  </div>
 </footer>
 
+<!-- Shared App Engine (questions, CORE‑12, routing, colour scoring, plan builder) -->
 <script src="assets/app.js"></script>
 <script>
-(() => {
-  // 1) Determine the quick set: prefer App.CORE12 if present, else ⭐ items.
-  const core = (window.App && Array.isArray(App.CORE12) && App.CORE12.length)
-    ? App.CORE12
-    : App.Q.filter(q => q.star);
+  // Render ONLY Core‑12
+  const qWrap = document.getElementById('qWrap');
+  App.renderQuestions(qWrap, 'core12');
 
-  let idx = 0;
-  const total = core.length;
-  const answers = {}; // { A1:'OK', B11:'Prefer quiet', ... }
+  // Progress set up
+  const coreItems = App.CORE12;
+  const total = coreItems.length; // 12
+  const countText = document.getElementById('countText');
+  const countBar  = document.getElementById('countBar');
 
-  const pText = document.getElementById('pText');
-  const pBar  = document.getElementById('pBar');
-  const qCard = document.getElementById('qCard');
-
-  function render(){
-    const q = core[idx];
-    if(!q){ return renderFinal(); }
-
-    const left  = q.options[0];
-    const hasMid = q.options.length === 3;
-    const mid   = hasMid ? q.options[1] : null;
-    const right = q.options[q.options.length - 1];
-
-    qCard.innerHTML = `
-      <div class="pupil-sub">${q.id}</div>
-      <div class="pupil-question">${q.label}</div>
-
-      <div class="pupil-controls" role="group" aria-label="Answer controls">
-        <button class="bigbtn big-cross" id="btnLeft" aria-label="${left}" title="${left}">❌</button>
-        ${hasMid ? `<button class="bigbtn big-mid" id="btnMid" aria-label="${mid}" title="${mid}">•</button>` : ''}
-        <button class="bigbtn big-heart" id="btnRight" aria-label="${right}" title="${right}">❤️</button>
-      </div>
-
-      <div class="pupil-labels">
-        <span class="lab">❌ = ${left}</span>
-        ${hasMid ? `<span class="lab">• = ${mid}</span>` : ''}
-        <span class="lab">❤️ = ${right}</span>
-      </div>
-    `;
-
-    // Attach handlers
-    document.getElementById('btnLeft').onclick  = () => choose(left);
-    if(hasMid) document.getElementById('btnMid').onclick   = () => choose(mid);
-    document.getElementById('btnRight').onclick = () => choose(right);
-
-    // Update progress
-    pText.textContent = `Question ${idx+1} / ${total}`;
-    pBar.style.width = Math.round((idx / total) * 100) + '%';
+  function updateProgress(){
+    const vals = App.readAnswers();
+    const answered = coreItems.filter(q => vals[q.id]).length;
+    const pct = Math.round((answered / total) * 100);
+    countText.textContent = `Answered: ${answered} / ${total}`;
+    countBar.style.width = pct + '%';
   }
 
-  function choose(value){
-    const q = core[idx];
-    answers[q.id] = value;
-    idx++;
-    if(idx < total) render();
-    else renderFinal();
-  }
+  // Delegate events to update progress as choices are made
+  qWrap.addEventListener('click', (e)=>{
+    if(e.target && e.target.matches('input[type="radio"]')) updateProgress();
+  });
+  qWrap.addEventListener('change', updateProgress);
+  updateProgress();
 
-  function renderFinal(){
-    // fill bar to 100
-    pBar.style.width = '100%';
-    pText.textContent = `All done`;
+  // Clear form
+  document.getElementById('clearBtn').onclick = ()=>{
+    document.querySelectorAll('input[type="radio"]').forEach(i=> i.checked=false);
+    document.querySelectorAll('.opt').forEach(o=> o.classList.remove('selected'));
+    updateProgress();
+    window.scrollTo({top:0, behavior:'smooth'});
+  };
 
-    qCard.innerHTML = `
-      <div class="pupil-question">All set! Your NeuroFit plan is ready.</div>
-      <button id="goBtn" class="final-btn">Continue</button>
-    `;
+  // Continue → validate → compute route + pre-colour → hand off to workout
+  document.getElementById('continueBtn').onclick = ()=>{
+    const values = App.readAnswers();
 
-    document.getElementById('goBtn').onclick = finish;
-  }
+    // Require all 12
+    const missing = coreItems.filter(q=> !values[q.id]);
+    if(missing.length){
+      alert('Please complete all 12 questions.');
+      return;
+    }
 
-  function finish(){
-    // Route and pre‑colour using shared App engine
-    const { primary, tags } = App.route(answers);
-    const pre = App.computePreColor(answers);
+    // Route + Pre‑Workout colour
+    const {primary, tags} = App.route(values);
+    const pre = App.computePreColor(values);
 
-    // Save for workout page
-    sessionStorage.setItem('screeningAnswers', JSON.stringify(answers));
-    sessionStorage.setItem('screeningRoute',   JSON.stringify({ primary, tags, origin:'pupil' }));
+    // Save to session
+    sessionStorage.setItem('screeningAnswers', JSON.stringify(values));
+    sessionStorage.setItem('screeningRoute',   JSON.stringify({ primary, tags, origin:'teacher-12' }));
     sessionStorage.setItem('preColor',         JSON.stringify(pre));
     sessionStorage.setItem('planType',         'short-term');
 
-    // Go to plan
+    // Next page
     location.href = 'workout.html';
-  }
-
-  // Keyboard shortcuts: Left=❌, Up=• (if exists), Right=❤️
-  window.addEventListener('keydown', (e)=>{
-    const q = core[idx];
-    if(!q) return;
-    if(e.key === 'ArrowLeft'){
-      choose(q.options[0]);
-    } else if(e.key === 'ArrowRight'){
-      choose(q.options[q.options.length-1]);
-    } else if(e.key === 'ArrowUp' && q.options.length === 3){
-      choose(q.options[1]);
-    }
-  });
-
-  // Start
-  render();
-})();
+  };
 </script>
 
 </body>
 </html>
-``
