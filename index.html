@@ -4,53 +4,47 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>NeuroFit — Home</title>
-<link rel="stylesheet" href="assets/styles.css">
+
+<link rel="stylesheet" href="assets/styles.css" />
 </head>
 
 <body>
 
 <header class="nf-header">
   <div class="wrap flex-between">
-    <div class="nf-logo-wrap">
-      <!-- Inline NeuroFit SVG Logo -->
-      <img src="assets/logo.svg" alt="NeuroFit Logo" class="nf-logo">
+    <a href="index.html" class="nf-logo-wrap">
+      <img src="assets/logo.svg" alt="NeuroFit Logo" width="36" height="36" />
       <span class="nf-title">NeuroFit</span>
-    </div>
+    </a>
+    <nav class="nf-nav">
+      <a href="screening-pupil.html">Pupil Check‑In</a>
+      <a href="screening-teacher.html">Teacher Planner</a>
+    </nav>
   </div>
 </header>
 
 <main class="wrap">
 
-  <!-- HERO PANEL -->
+  <!-- HERO -->
   <section class="card nf-hero">
     <h1>Welcome to NeuroFit</h1>
-    <p class="sub">
-      Movement‑based regulation made simple — choose your path:
-    </p>
+    <p class="sub">Movement‑based regulation made simple.</p>
 
-    <div class="nf-btn-grid">
-
-      <!-- Pupil Button -->
-      <a href="screening-pupil.html" class="nf-btn primary">
-        NeuroFit Check‑In (Pupils)
-      </a>
-
-      <!-- Teacher Button -->
-      <a href="screening-teacher.html" class="nf-btn secondary">
-        NeuroFit Planner (Teachers)
-      </a>
-
+    <div class="nf-btn-grid" style="margin-top:20px;">
+      <a class="nf-btn" href="screening-pupil.html">NeuroFit Check‑In (Pupils)</a>
+      <a class="nf-btn" href="screening-teacher.html">NeuroFit Planner (Teachers)</a>
     </div>
   </section>
 
 
-  <!-- TRIAGE SECTION -->
+  <!-- TRIAGE -->
   <section class="card" style="margin-top:28px;">
     <h2>Instant 10‑Minute Triage</h2>
     <div class="body">
-      <p class="sub">A fast regulation tool based on current state.</p>
 
-      <div class="nf-triage-grid">
+      <p class="sub">Generate an immediate 10‑minute regulation routine:</p>
+
+      <div class="nf-triage-grid" style="margin-bottom:10px;">
 
         <label class="nf-field">
           Current need:
@@ -70,7 +64,7 @@
         </label>
 
         <label class="nf-field">
-          Seated option needed?
+          Seated option required?
           <select id="t_chair">
             <option value="no">No</option>
             <option value="yes">Yes</option>
@@ -80,23 +74,27 @@
       </div>
 
       <div class="actions">
-        <button id="triageBtn">Generate 10‑min Plan</button>
+        <button id="triageBtn">Generate 10‑Min Plan</button>
       </div>
 
       <div id="triageOut" class="plan"></div>
-      <div class="footer-note">Split: Warm‑up 2 · Main 6 · Cool‑down 2 minutes.</div>
 
     </div>
   </section>
 
 </main>
 
+<footer class="nf-footer">
+  <div class="wrap">© NeuroFit</div>
+</footer>
+
 <script src="assets/app.js"></script>
 <script>
-document.getElementById('triageBtn').onclick = ()=>{
+document.getElementById('triageBtn').onclick = () => {
   const state = document.getElementById('t_state').value;
   const quiet = document.getElementById('t_env').value === 'quiet';
   const chair = document.getElementById('t_chair').value === 'yes';
+
   const tri = App.triagePlan({state, quiet, chair});
   App.renderTriagePlan(document.getElementById('triageOut'), tri);
 };
