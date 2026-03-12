@@ -3,84 +3,57 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>NeuroFit Check‑In — Pupil Swipe</title>
+<title>NeuroFit Check‑In — Pupil (Click Mode)</title>
 
-<!-- NeuroFit global styles -->
-assets/styles.css
+<link rel="stylesheet" href="assets/styles.css" />
 
 <style>
-/* Additional swipe-specific styling */
-.swipe-container{
-  max-width:420px;
-  margin:0 auto;
-  position:relative;
-  height:420px;
-  margin-top:20px;
-}
+/* Page-specific styles for click-based heart/cross UI */
+.pupil-wrap { max-width:560px; margin:0 auto; }
 
-.card-swipe{
-  position:absolute;
-  width:100%;
+.pupil-card {
   background:linear-gradient(180deg,#121520,#11131b);
   border:1px solid rgba(255,255,255,.12);
-  box-shadow:0 10px 30px rgba(0,0,0,.35);
   border-radius:18px;
-  padding:24px;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);
+  padding:22px 18px;
   text-align:center;
-  transition:transform .25s ease, opacity .25s ease;
-  touch-action:none;
-  user-select:none;
+}
+.pupil-question {
+  font-size:1.15rem;
+  line-height:1.35;
+  margin:8px 0 6px;
+  min-height:3.2rem;
+}
+.pupil-sub { color:var(--muted); font-size:.95rem; }
+
+.pupil-controls {
+  display:flex; align-items:center; justify-content:center; gap:14px; margin:12px 0 4px;
+}
+.bigbtn {
+  width:84px; height:84px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:36px; cursor:pointer; user-select:none; border:2px solid transparent;
+  transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+.bigbtn:hover { transform:translateY(-1px); }
+.bigbtn:active { transform:translateY(0); }
+
+.big-cross { background:#2a1520; border-color:#ff7d7d44; }
+.big-heart { background:#14242e; border-color:#5CC8FF44; }
+.big-mid   { background:#1c1f2a; border-color:#ffffff22; width:70px; height:70px; font-size:22px; }
+
+.pupil-labels { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:6px; }
+.lab {
+  padding:4px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.18); font-size:.85rem; color:var(--muted);
 }
 
-.card-swipe h2{
-  margin-top:0;
-  font-size:1.25rem;
-  line-height:1.3;
-}
+.pupil-progress { text-align:center; margin:10px 0 6px; color:var(--muted); }
+.pbar { width:100%; height:8px; background:rgba(255,255,255,.1); border-radius:999px; overflow:hidden; }
+.pbar-inner { height:100%; width:0%; background:linear-gradient(90deg,#5CC8FF,#77FFB1); }
 
-.swipe-options{
-  margin-top:20px;
-  display:flex;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap:10px;
-}
-
-.swipe-opt-btn{
-  padding:10px 16px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,.18);
-  background:#0f1520;
-  cursor:pointer;
-  font-size:1rem;
-}
-.swipe-opt-btn:hover{background:#162032;}
-
-#progressText{
-  text-align:center;
-  margin-top:10px;
-  color:var(--muted);
-}
-
-.progress-bar{
-  width:100%;
-  height:8px;
-  background:rgba(255,255,255,.1);
-  border-radius:999px;
-  overflow:hidden;
-  margin-top:6px;
-}
-.progress-bar-inner{
-  height:100%;
-  width:0%;
-  background:linear-gradient(90deg,#5CC8FF,#77FFB1);
-}
-
-/* Final message card */
-.final-card{
-  text-align:center;
-  padding:30px;
-}
+.final-btn { margin-top:14px; padding:10px 16px; border-radius:12px; border:1px solid rgba(255,255,255,.18); background:#0f1520; cursor:pointer; }
+.final-btn:hover { background:#162032; }
 </style>
 </head>
 
@@ -88,45 +61,44 @@ assets/styles.css
 
 <header class="nf-header">
   <div class="wrap flex-between">
-    index.html
-      assets/logo.svg
+    <a href="index.html" class="nf-logo-wrap">
+      <img src="assets/logo.svg" alt="" width="28" height="28" />
       <span class="nf-title">NeuroFit</span>
     </a>
     <nav class="nf-nav">
-      index.htmlHome</a>
-      screening-teacher.htmlTeacher Mode</a>
+      <a href="index.html">Home</a>
+      <a href="screening-teacher.html">Teacher Mode</a>
     </nav>
   </div>
 </header>
 
-<main class="wrap">
+<main class="wrap pupil-wrap">
 
-  <section class="card nf-hero">
+  <section class="card nf-hero" style="text-align:center">
     <h1>NeuroFit Check‑In</h1>
-    <p class="sub">
-      Swipe to answer each question.  
-      Your responses build a personalised 30‑minute routine.
-    </p>
-    <div class="pill">Swipe left or right</div>
-    <div class="pill">Core‑12 ⭐ items</div>
+    <p class="sub">Tap ❌ for the left choice, ❤️ for the right choice. If you see a middle dot, it’s the “in‑between” option.</p>
+    <div class="pill">Core quick screen</div>
   </section>
 
   <section class="card">
-    <h2>Pupil Swipe Questions</h2>
+    <h2>Pupil Questions</h2>
     <div class="body">
 
-      <!-- Progress -->
-      <div id="progressText">Question 1 / 12</div>
-      <div class="progress-bar"><div class="progress-bar-inner" id="pBar"></div></div>
+      <!-- progress -->
+      <div class="pupil-progress">
+        <span id="pText">Question 1 / 12</span>
+        <div class="pbar"><div class="pbar-inner" id="pBar"></div></div>
+      </div>
 
-      <!-- Swipe area -->
-      <div class="swipe-container" id="swipeArea">
-        <!-- Cards dynamically inserted here -->
+      <!-- interactive card -->
+      <div class="pupil-card" id="qCard" aria-live="polite">
+        <!-- Populated by JS -->
       </div>
 
       <div class="footer-note" style="margin-top:10px;">
-        Tap an option or swipe left/right to answer.
+        Keyboard: ← = ❌ &nbsp;•&nbsp; ↑ = • &nbsp;•&nbsp; → = ❤️
       </div>
+
     </div>
   </section>
 
@@ -136,121 +108,112 @@ assets/styles.css
   <div class="wrap">© NeuroFit</div>
 </footer>
 
-<!-- Shared NeuroFit logic -->
-assets/app.js</script>
-
-<!-- Swipe engine -->
-assets/swipe.js</script>
-
+<script src="assets/app.js"></script>
 <script>
-// ---------------------------
-// Pupil Swipe Screening Logic
-// ---------------------------
+(() => {
+  // 1) Determine the quick set: prefer App.CORE12 if present, else ⭐ items.
+  const core = (window.App && Array.isArray(App.CORE12) && App.CORE12.length)
+    ? App.CORE12
+    : App.Q.filter(q => q.star);
 
-// 1) Get the Core-12 items
-const core = App.Q.filter(q => q.star);
+  let idx = 0;
+  const total = core.length;
+  const answers = {}; // { A1:'OK', B11:'Prefer quiet', ... }
 
-// Shuffle slightly? (Optional)
-// core.sort(() => Math.random() - 0.5);
+  const pText = document.getElementById('pText');
+  const pBar  = document.getElementById('pBar');
+  const qCard = document.getElementById('qCard');
 
-let index = 0;
-const total = core.length;
-const answers = {}; // { A1:'OK', B11:'Prefer quiet', ... }
+  function render(){
+    const q = core[idx];
+    if(!q){ return renderFinal(); }
 
-const container = document.getElementById('swipeArea');
-const pText = document.getElementById('progressText');
-const pBar  = document.getElementById('pBar');
+    const left  = q.options[0];
+    const hasMid = q.options.length === 3;
+    const mid   = hasMid ? q.options[1] : null;
+    const right = q.options[q.options.length - 1];
 
-// 2) Create card DOM
-function createCard(q){
-  const card = document.createElement('div');
-  card.className='card-swipe';
-  card.innerHTML = `
-    <h2>${q.id}. ${q.label}</h2>
-    <div class="swipe-options">
-      ${q.options.map(opt => `<button class="swipe-opt-btn" data-val="${opt}">${opt}</button>`).join('')}
-    </div>
-  `;
-  return card;
-}
+    qCard.innerHTML = `
+      <div class="pupil-sub">${q.id}</div>
+      <div class="pupil-question">${q.label}</div>
 
-// 3) Load first card
-loadCard();
+      <div class="pupil-controls" role="group" aria-label="Answer controls">
+        <button class="bigbtn big-cross" id="btnLeft" aria-label="${left}" title="${left}">❌</button>
+        ${hasMid ? `<button class="bigbtn big-mid" id="btnMid" aria-label="${mid}" title="${mid}">•</button>` : ''}
+        <button class="bigbtn big-heart" id="btnRight" aria-label="${right}" title="${right}">❤️</button>
+      </div>
 
-function loadCard(){
-  container.innerHTML = ''; // clear
-  const q = core[index];
-  const card = createCard(q);
-  container.appendChild(card);
-  enhanceCardWithSwipe(card, q);
-  updateProgress();
-}
+      <div class="pupil-labels">
+        <span class="lab">❌ = ${left}</span>
+        ${hasMid ? `<span class="lab">• = ${mid}</span>` : ''}
+        <span class="lab">❤️ = ${right}</span>
+      </div>
+    `;
 
-// 4) Swipe engine wrappers
-function enhanceCardWithSwipe(card, q){
-  SwipeCard(card, {
-    onLeft: ()=>{
-      handleAnswer(q, q.options[0]); // first option
-    },
-    onRight: ()=>{
-      handleAnswer(q, q.options[q.options.length-1]); // last option
-    }
-  });
+    // Attach handlers
+    document.getElementById('btnLeft').onclick  = () => choose(left);
+    if(hasMid) document.getElementById('btnMid').onclick   = () => choose(mid);
+    document.getElementById('btnRight').onclick = () => choose(right);
 
-  // Tap select
-  card.querySelectorAll('.swipe-opt-btn').forEach(btn=>{
-    btn.onclick = ()=>{
-      handleAnswer(q, btn.dataset.val);
-    };
-  });
-}
-
-// 5) Handle answers
-function handleAnswer(question, value){
-  answers[question.id] = value;
-  index++;
-
-  if(index < total){
-    loadCard();
-  } else {
-    finishSwipe();
+    // Update progress
+    pText.textContent = `Question ${idx+1} / ${total}`;
+    pBar.style.width = Math.round((idx / total) * 100) + '%';
   }
-}
 
-// 6) Update progress bar + text
-function updateProgress(){
-  pText.textContent = `Question ${index+1} / ${total}`;
-  pBar.style.width = Math.round(((index) / total) * 100) + '%';
-}
+  function choose(value){
+    const q = core[idx];
+    answers[q.id] = value;
+    idx++;
+    if(idx < total) render();
+    else renderFinal();
+  }
 
-// 7) Finish → store → compute → go to workout
-function finishSwipe(){
-  container.innerHTML = `
-    <div class="card-swipe final-card" style="position:relative;">
-      <h2>All Done!</h2>
-      <p>Your personalised NeuroFit plan is ready.</p>
-      <button id="goWorkoutBtn" class="swipe-opt-btn" style="margin-top:20px;">
-        Continue
-      </button>
-    </div>
-  `;
+  function renderFinal(){
+    // fill bar to 100
+    pBar.style.width = '100%';
+    pText.textContent = `All done`;
 
-  document.getElementById('goWorkoutBtn').onclick = ()=>{
-    // Compute output
+    qCard.innerHTML = `
+      <div class="pupil-question">All set! Your NeuroFit plan is ready.</div>
+      <button id="goBtn" class="final-btn">Continue</button>
+    `;
+
+    document.getElementById('goBtn').onclick = finish;
+  }
+
+  function finish(){
+    // Route and pre‑colour using shared App engine
     const { primary, tags } = App.route(answers);
     const pre = App.computePreColor(answers);
 
-    // Save to session
+    // Save for workout page
     sessionStorage.setItem('screeningAnswers', JSON.stringify(answers));
     sessionStorage.setItem('screeningRoute',   JSON.stringify({ primary, tags, origin:'pupil' }));
     sessionStorage.setItem('preColor',         JSON.stringify(pre));
     sessionStorage.setItem('planType',         'short-term');
 
-    // Go
+    // Go to plan
     location.href = 'workout.html';
-  };
-}
+  }
+
+  // Keyboard shortcuts: Left=❌, Up=• (if exists), Right=❤️
+  window.addEventListener('keydown', (e)=>{
+    const q = core[idx];
+    if(!q) return;
+    if(e.key === 'ArrowLeft'){
+      choose(q.options[0]);
+    } else if(e.key === 'ArrowRight'){
+      choose(q.options[q.options.length-1]);
+    } else if(e.key === 'ArrowUp' && q.options.length === 3){
+      choose(q.options[1]);
+    }
+  });
+
+  // Start
+  render();
+})();
 </script>
 
 </body>
 </html>
+``
