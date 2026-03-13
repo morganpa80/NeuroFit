@@ -4,7 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>NeuroFit — Pupil Check‑In</title>
-  <link rel="stylesheet" href="assets/styles.css" />
+
+  <!-- CACHE-BUSTED STYLESHEET -->
+  <link rel="stylesheet" href="assets/styles.css?v=10" />
 </head>
 
 <body>
@@ -41,8 +43,6 @@
     <h2>How are you feeling?</h2>
 
     <div class="body">
-
-      <!-- Progress -->
       <div class="nf-progress-wrap" style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
         <div id="countText" class="sub">Answered: 0 / 12</div>
         <div style="flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;">
@@ -62,7 +62,6 @@
       <button id="clearBtn" class="secondary">Clear</button>
     </div>
   </section>
-
 </main>
 
 <footer class="nf-footer">
@@ -115,7 +114,6 @@ function enhanceOptionPills({ container, onChange }) {
 </script>
 
 <script>
-/* ===== Pupil-friendly labels (mapped to CORE12 IDs) ===== */
 const PUPIL_LABELS = {
   A1: "How is your energy?",
   A2: "How easy is it to focus?",
@@ -131,17 +129,14 @@ const PUPIL_LABELS = {
   E39: "Do you need a chair today?"
 };
 
-/* Render CORE12 */
 const qWrap = document.getElementById('qWrap');
 App.renderQuestions(qWrap, 'core12');
 
-/* Apply pupil labels */
 Object.entries(PUPIL_LABELS).forEach(([id, text]) => {
   const row = qWrap.querySelector(`[data-id="${id}"] label`);
   if (row) row.textContent = text;
 });
 
-/* Progress */
 const coreItems = App.CORE12;
 const total = coreItems.length;
 const countText = document.getElementById('countText');
@@ -154,12 +149,9 @@ function updateProgress(){
   countBar.style.width = Math.round(answered/total*100) + "%";
 }
 
-/* APPLY SPRINT UI HERE  */
 enhanceOptionPills({ container: qWrap, onChange: updateProgress });
-
 updateProgress();
 
-/* Clear */
 document.getElementById('clearBtn').onclick = ()=>{
   qWrap.querySelectorAll('input[type="radio"]').forEach(r=>r.checked=false);
   qWrap.querySelectorAll('.nf-option').forEach(p=>p.classList.remove('selected'));
@@ -167,7 +159,6 @@ document.getElementById('clearBtn').onclick = ()=>{
   window.scrollTo({top:0,behavior:'smooth'});
 };
 
-/* Continue */
 document.getElementById('continueBtn').onclick = () => {
   const values = App.readAnswers();
   const missing = coreItems.filter(q=>!values[q.id]);
