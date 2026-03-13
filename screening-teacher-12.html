@@ -4,8 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>NeuroFit — Teacher Screening (Core‑12)</title>
-
-  <!-- NeuroFit styles -->
   <link rel="stylesheet" href="assets/styles.css" />
 </head>
 
@@ -14,42 +12,32 @@
 <header class="nf-header">
   <div class="wrap flex-between">
     <a href="index.html" class="nf-logo-wrap">
-      <img src="assets/logo.svg" alt="NeuroFit logo" width="32" height="32" />
+      <img src="assets/logo.svg" width="32" height="32" alt="NeuroFit logo"/>
       <span class="nf-title">NeuroFit</span>
     </a>
-
-    <nav class="nf-nav" aria-label="Primary">
+    <nav class="nf-nav">
       <a href="index.html">Home</a>
-      <a href="screening-teacher.html" aria-current="page">Teacher Menu</a>
-      <a href="screening-pupil.html">Pupil Check‑In</a>
-    </nav>
-  </div>
-</header>
-
-<main class="wrap">
-
-  <!-- INTRO -->
+      <a href="screenO -->
   <section class="card nf-hero">
-    <h1>Teacher Screening — Core‑12</h1>
+    <h1>Core‑12 Regulation Screening</h1>
     <p class="sub">
-      A quick 2–3 minute screening of today's regulation profile.
-      These 12 items form the official Core‑12 set used across NeuroFit.
+      A fast 2‑minute professional snapshot of current regulation status.
+      Produces a full 30‑minute NeuroFit plan.
     </p>
-
-    <div class="nf-inline-stats" style="margin-top:8px;">
+    <div class="nf-inline-stats">
       <div class="pill">Core‑12 set</div>
       <div class="pill">Pre‑Workout colour computed</div>
-      <div class="pill">Fast route to plan</div>
+      <div class="pill">Fast planning route</div>
     </div>
   </section>
 
-  <!-- QUESTIONNAIRE -->
+  <!-- QUESTIONS -->
   <section class="card">
     <h2>Core‑12 Questionnaire</h2>
 
     <div class="body">
 
-      <!-- PROGRESS -->
+      <!-- Progress -->
       <div class="nf-progress-wrap" style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
         <div id="countText" class="sub">Answered: 0 / 12</div>
         <div style="flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;">
@@ -57,12 +45,11 @@
         </div>
       </div>
 
-      <!-- Questions injected here -->
       <div id="qWrap"></div>
 
       <div class="footer-note" style="margin-top:8px;">
-        Need a deeper profile? Switch to the
-        <a href="screening-teacher-40.html">40‑question screen</a>.
+        Need a deeper profile? Use the 
+        <a href="screening-teacher-40.html">40‑question full screen</a>.
       </div>
     </div>
 
@@ -78,80 +65,101 @@
   <div class="wrap">© NeuroFit</div>
 </footer>
 
-<!-- Shared Logic -->
 <script src="assets/app.js"></script>
 
+<!-- Sprint Enhancer -->
 <script>
-/* =========================================================
-   1) RENDER CORE‑12 QUESTIONS
-   ========================================================= */
-const qWrap = document.getElementById('qWrap');
-App.renderQuestions(qWrap, 'core12');  // hides non‑CORE12 items
+/* (same enhancer as pupil page) */
+function enhanceOptionPills({ container, onChange }) {
+  const root = container;
 
-/* =========================================================
-   2) PROGRESS TRACKING
-   ========================================================= */
+  root.querySelectorAll('input[type="radio"]').forEach(input => {
+    let label = input.closest('label');
+    if (!label) {
+      label = document.createElement('label');
+      input.parentNode.insertBefore(label, input);
+      label.appendChild(input);
+    }
+    label.classList.add('nf-option');
+
+    if (!label.querySelector('.nf-option-text')) {
+      const span = document.createElement('span');
+      span.className = 'nf-option-text';
+      span.textContent = input.value;
+      label.appendChild(span);
+    }
+  });
+
+  function updateSelected(name) {
+    const group = root.querySelectorAll(`input[name="${CSS.escape(name)}"]`);
+    group.forEach(radio => {
+      const pill = radio.closest('.nf-option');
+      if (pill) pill.classList.toggle('selected', radio.checked);
+    });
+  }
+
+  root.addEventListener('change', e => {
+    if (e.target && e.target.matches('input[type="radio"]')) {
+      updateSelected(e.target.name);
+      onChange && onChange();
+    }
+  });
+
+  const names = new Set();
+  root.querySelectorAll('input[type="radio"]').forEach(r => names.add(r.name));
+  names.forEach(updateSelected);
+}
+</script>
+
+<script>
+/* Render Core12 */
+const qWrap = document.getElementById('qWrap');
+App.renderQuestions(qWrap, 'core12');
+
+/* Progress */
 const coreItems = App.CORE12;
 const total = coreItems.length;
 const countText = document.getElementById('countText');
-const countBar = document.getElementById('countBar');
+const countBar  = document.getElementById('countBar');
 
-function updateProgress() {
+function updateProgress(){
   const vals = App.readAnswers();
-  const answered = coreItems.filter(q => vals[q.id]).length;
-  const pct = Math.round((answered / total) * 100);
-
+  const answered = coreItems.filter(q=>vals[q.id]).length;
   countText.textContent = `Answered: ${answered} / ${total}`;
-  countBar.style.width = pct + "%";
+  countBar.style.width = Math.round(answered/total*100) + "%";
 }
 
-// update as teachers choose options
-qWrap.addEventListener('click', e => {
-  if (e.target && e.target.matches('input[type="radio"]')) updateProgress();
-});
-qWrap.addEventListener('change', updateProgress);
+/* APPLY SPRINT UI HERE  */
+enhanceOptionPills({ container: qWrap, onChange: updateProgress });
+
 updateProgress();
 
-/* =========================================================
-   3) CLEAR BUTTON
-   ========================================================= */
-document.getElementById('clearBtn').onclick = () => {
-  document.querySelectorAll('input[type="radio"]').forEach(i => i.checked = false);
-  document.querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
+/* Clear */
+document.getElementById('clearBtn').onclick = ()=>{
+  qWrap.querySelectorAll('input[type="radio"]').forEach(r=>r.checked=false);
+  qWrap.querySelectorAll('.nf-option').forEach(p=>p.classList.remove('selected'));
   updateProgress();
-  window.scrollTo({top:0, behavior:'smooth'});
+  window.scrollTo({top:0,behavior:'smooth'});
 };
 
-/* =========================================================
-   4) CONTINUE → VALIDATE → ROUTING → WORKOUT
-   ========================================================= */
+/* Continue */
 document.getElementById('continueBtn').onclick = () => {
   const values = App.readAnswers();
+  const missing = coreItems.filter(q=>!values[q.id]);
+  if(missing.length){ alert("Please complete all 12 questions."); return; }
 
-  // require all 12
-  const missing = coreItems.filter(q => !values[q.id]);
-  if (missing.length) {
-    alert("Please complete all 12 questions.");
-    return;
-  }
-
-  // routing + pre‑workout colour
-  const { primary, tags } = App.route(values);
+  const {primary, tags} = App.route(values);
   const pre = App.computePreColor(values);
 
-  // save for workout.html
-  sessionStorage.setItem('screeningAnswers', JSON.stringify(values));
-  sessionStorage.setItem(
-    'screeningRoute',
-    JSON.stringify({ primary, tags, origin: 'teacher-12' })
-  );
-  sessionStorage.setItem('preColor', JSON.stringify(pre));
-  sessionStorage.setItem('planType', 'short-term');
+  sessionStorage.setItem('screeningAnswers',JSON.stringify(values));
+  sessionStorage.setItem('screeningRoute',JSON.stringify({primary,tags,origin:'teacher-12'}));
+  sessionStorage.setItem('preColor',JSON.stringify(pre));
+  sessionStorage.setItem('planType','short-term');
 
-  // go to workout
   location.href = 'workout.html';
 };
 </script>
 
 </body>
 </html>
+``
