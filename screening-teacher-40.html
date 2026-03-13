@@ -3,38 +3,39 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>NeuroFit — Teacher 6‑Week Plan (40Q)</title>
+  <title>NeuroFit — Teacher Screening (Full 40)</title>
 
   <!-- NeuroFit styles -->
   <link rel="stylesheet" href="assets/styles.css" />
 </head>
 
 <body>
-
 <header class="nf-header">
   <div class="wrap flex-between">
     <a href="index.html" class="nf-logo-wrap" aria-label="NeuroFit Home">
       <img src="assets/logo.svg" alt="" width="32" height="32" />
       <span class="nf-title">NeuroFit</span>
     </a>
+
     <nav class="nf-nav" aria-label="Primary">
       <a href="index.html">Home</a>
       <a href="screening-teacher.html">Teacher Menu</a>
-      <a href="screening-pupil.html">Pupil Check‑In (Preview)</a>
+      <a href="screening-pupil.html">Pupil Check‑In</a>
     </nav>
   </div>
 </header>
 
 <main class="wrap">
 
-  <!-- Intro card -->
+  <!-- INTRO -->
   <section class="card nf-hero">
-    <h1>Teacher Screening — 6‑Week Plan</h1>
+    <h1>Teacher Screening — Full 40</h1>
     <p class="sub">
-      Complete the full <b>40‑question</b> screen to generate a structured 30‑minute routine and
-      a baseline <b>Pre‑Workout Colour</b> (Green / Yellow / Amber / Red). This supports tracking
-      regulation across your 6‑week intervention.
+      Complete the full <b>40‑question</b> screen to generate a structured
+      30‑minute routine and a baseline <b>Pre‑Workout Colour</b>
+      (Green / Yellow / Amber / Red). Use this to track regulation across a 6‑week block.
     </p>
+
     <div class="nf-inline-stats">
       <div class="pill">A–E Domains</div>
       <div class="pill">40 items</div>
@@ -42,12 +43,12 @@
     </div>
   </section>
 
-  <!-- Screening form card -->
+  <!-- QUESTIONNAIRE -->
   <section class="card">
     <h2 style="padding-bottom:0;">Screening Questionnaire (Full 40)</h2>
-    <div class="body">
 
-      <!-- Progress -->
+    <div class="body">
+      <!-- PROGRESS -->
       <div class="nf-progress-wrap" style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
         <div id="countText" class="sub">Answered: 0 / 40</div>
         <div style="flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;">
@@ -55,12 +56,12 @@
         </div>
       </div>
 
-      <!-- Questions render here -->
+      <!-- Questions injected here -->
       <div id="qWrap"></div>
 
       <div class="footer-note" style="margin-top:8px;">
-        Short on time? Try the
-        <a href="screening-teacher-12.html">Core‑12 Short‑Term Activity (12Q)</a>.
+        Short on time? Use the
+        <a href="screening-teacher-12.html">Core‑12 short screen</a>.
       </div>
     </div>
 
@@ -85,70 +86,76 @@
 </main>
 
 <footer class="nf-footer">
-  <div class="wrap">
-    <span>© NeuroFit</span>
-  </div>
+  <div class="wrap">© NeuroFit</div>
 </footer>
 
 <!-- Shared logic (questions, routing, colour scoring, plan builder, etc.) -->
 <script src="assets/app.js"></script>
+
 <script>
-  // Render all 40 questions
+  /* =========================================================
+     1) RENDER ALL 40 QUESTIONS
+     ========================================================= */
   const qWrap = document.getElementById('qWrap');
   App.renderQuestions(qWrap, 'full'); // full = show all A–E items
 
-  // Progress counter
+  /* =========================================================
+     2) PROGRESS TRACKING
+     ========================================================= */
   const total = App.Q.length; // 40
   const countText = document.getElementById('countText');
   const countBar  = document.getElementById('countBar');
 
   function updateProgress(){
-    const values = App.readAnswers();
-    const answered = App.Q.reduce((acc,q)=> acc + (values[q.id] ? 1 : 0), 0);
-    const pct = Math.round((answered / total) * 100);
+    const values   = App.readAnswers();
+    const answered = App.Q.reduce((acc, q) => acc + (values[q.id] ? 1 : 0), 0);
+    const pct      = Math.round((answered / total) * 100);
+
     countText.textContent = `Answered: ${answered} / ${total}`;
-    countBar.style.width = pct + '%';
+    countBar.style.width  = pct + '%';
   }
 
-  // Delegate clicks/changes to update progress
-  qWrap.addEventListener('click', (e)=>{
-    if(e.target && e.target.matches('input[type="radio"]')) updateProgress();
+  // Update as choices are made
+  qWrap.addEventListener('click', (e) => {
+    if (e.target && e.target.matches('input[type="radio"]')) updateProgress();
   });
   qWrap.addEventListener('change', updateProgress);
 
   // Initial update
   updateProgress();
 
-  // Clear button
-  document.getElementById('clearBtn').addEventListener('click', ()=>{
-    document.querySelectorAll('input[type="radio"]').forEach(i=> i.checked = false);
-    document.querySelectorAll('.opt').forEach(o=> o.classList.remove('selected'));
+  /* =========================================================
+     3) CLEAR BUTTON
+     ========================================================= */
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    document.querySelectorAll('input[type="radio"]').forEach(i => i.checked = false);
+    document.querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
     updateProgress();
-    window.scrollTo({top:0, behavior:'smooth'});
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  // Continue → validate, compute route + pre-colour, store, navigate
-  document.getElementById('continueBtn').addEventListener('click', ()=>{
-    const values = App.readAnswers();
+  /* =========================================================
+     4) CONTINUE → VALIDATE → STORE → WORKOUT
+     ========================================================= */
+  document.getElementById('continueBtn').addEventListener('click', () => {
+    const values  = App.readAnswers();
 
-    // Require ALL 40 for this path
+    // require ALL 40 for this path
     const missing = App.Q.filter(q => !values[q.id]);
-    if(missing.length){
+    if (missing.length) {
       alert('Please complete all 40 questions before continuing.');
       return;
     }
 
-    // Route (Wake Up / Focus / Reset / Calm + tags)
+    // Route (Wake Up / Focus / Reset / Calm + tags) + Pre‑Workout colour
     const { primary, tags } = App.route(values);
-
-    // Compute Pre‑Workout colour (score + colour + label)
-    const pre = App.computePreColor(values); // {score,color,label}
+    const pre               = App.computePreColor(values); // {score,color,label}
 
     // Persist to session for the workout page
     sessionStorage.setItem('screeningAnswers', JSON.stringify(values));
-    sessionStorage.setItem('screeningRoute',   JSON.stringify({ primary, tags, origin:'teacher-40' }));
-    sessionStorage.setItem('preColor',         JSON.stringify(pre));
-    sessionStorage.setItem('planType',         '6-week');
+    sessionStorage.setItem('screeningRoute', JSON.stringify({ primary, tags, origin: 'teacher-40' }));
+    sessionStorage.setItem('preColor', JSON.stringify(pre));
+    sessionStorage.setItem('planType', '6-week');
 
     // Go to workout
     location.href = 'workout.html';
@@ -157,4 +164,3 @@
 
 </body>
 </html>
-``
