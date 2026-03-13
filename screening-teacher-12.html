@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>NeuroFit — Teacher Short‑Term Activity (Core‑12)</title>
+  <title>NeuroFit — Teacher Screening (Core‑12)</title>
 
   <!-- NeuroFit styles -->
   <link rel="stylesheet" href="assets/styles.css" />
@@ -17,53 +17,39 @@
       <img src="assets/logo.svg" alt="NeuroFit logo" width="32" height="32" />
       <span class="nf-title">NeuroFit</span>
     </a>
+
     <nav class="nf-nav" aria-label="Primary">
       <a href="index.html">Home</a>
-      <a href="screening-teacher.html">Teacher Menu</a>
-      <a href="screening-pupil.html">Pupil Check‑In (Preview)</a>
+      <a href="screening-teacher.html" aria-current="page">Teacher Menu</a>
+      <a href="screening-pupil.html">Pupil Check‑In</a>
     </nav>
   </div>
 </header>
 
 <main class="wrap">
 
-  <!-- Intro -->
+  <!-- INTRO -->
   <section class="card nf-hero">
-    <h1>Short‑Term Activity Screening (Core‑12)</h1>
-    <p class="sub">This is the official Core‑12 set used for fast regulation checks (same for Pupils & Teachers).</p>
-
-    <!-- CORE-12 VISUAL LIST -->
-    <div style="margin-top:14px; text-align:left; max-width:440px; margin-left:auto; margin-right:auto;">
-      <strong>Core‑12 Items:</strong>
-      <ul class="nf-bullets">
-        <li>A1 — Energy</li>
-        <li>A2 — Focus</li>
-        <li>A3 — Motivation</li>
-        <li>A4 — Body Feeling</li>
-        <li>A5 — Emotional State</li>
-        <li>B11 — Sound Tolerance</li>
-        <li>B15 — Proprioceptive Preference</li>
-        <li>B16 — Vestibular Preference</li>
-        <li>C21 — Balance Confidence</li>
-        <li>C25 — Sequencing 3–4 Moves</li>
-        <li>E35 — Dizziness When Turning</li>
-        <li>E39 — Need Seated Options</li>
-      </ul>
-    </div>
+    <h1>Teacher Screening — Core‑12</h1>
+    <p class="sub">
+      A quick 2–3 minute screening of today's regulation profile.
+      These 12 items form the official Core‑12 set used across NeuroFit.
+    </p>
 
     <div class="nf-inline-stats" style="margin-top:8px;">
-      <div class="pill">Core‑12</div>
+      <div class="pill">Core‑12 set</div>
       <div class="pill">Pre‑Workout colour computed</div>
       <div class="pill">Fast route to plan</div>
     </div>
   </section>
 
-  <!-- Screening form -->
+  <!-- QUESTIONNAIRE -->
   <section class="card">
     <h2>Core‑12 Questionnaire</h2>
+
     <div class="body">
 
-      <!-- Progress -->
+      <!-- PROGRESS -->
       <div class="nf-progress-wrap" style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
         <div id="countText" class="sub">Answered: 0 / 12</div>
         <div style="flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;">
@@ -71,10 +57,11 @@
         </div>
       </div>
 
+      <!-- Questions injected here -->
       <div id="qWrap"></div>
 
       <div class="footer-note" style="margin-top:8px;">
-        Need the full profile instead? Try the
+        Need a deeper profile? Switch to the
         <a href="screening-teacher-40.html">40‑question screen</a>.
       </div>
     </div>
@@ -88,71 +75,82 @@
 </main>
 
 <footer class="nf-footer">
-  <div class="wrap">
-    © NeuroFit
-  </div>
+  <div class="wrap">© NeuroFit</div>
 </footer>
 
-<!-- Shared App Engine (questions, CORE‑12, routing, colour scoring, plan builder) -->
+<!-- Shared Logic -->
 <script src="assets/app.js"></script>
+
 <script>
-  // Render ONLY Core‑12
-  const qWrap = document.getElementById('qWrap');
-  App.renderQuestions(qWrap, 'core12');
+/* =========================================================
+   1) RENDER CORE‑12 QUESTIONS
+   ========================================================= */
+const qWrap = document.getElementById('qWrap');
+App.renderQuestions(qWrap, 'core12');  // hides non‑CORE12 items
 
-  // Progress set up
-  const coreItems = App.CORE12;
-  const total = coreItems.length; // 12
-  const countText = document.getElementById('countText');
-  const countBar  = document.getElementById('countBar');
+/* =========================================================
+   2) PROGRESS TRACKING
+   ========================================================= */
+const coreItems = App.CORE12;
+const total = coreItems.length;
+const countText = document.getElementById('countText');
+const countBar = document.getElementById('countBar');
 
-  function updateProgress(){
-    const vals = App.readAnswers();
-    const answered = coreItems.filter(q => vals[q.id]).length;
-    const pct = Math.round((answered / total) * 100);
-    countText.textContent = `Answered: ${answered} / ${total}`;
-    countBar.style.width = pct + '%';
+function updateProgress() {
+  const vals = App.readAnswers();
+  const answered = coreItems.filter(q => vals[q.id]).length;
+  const pct = Math.round((answered / total) * 100);
+
+  countText.textContent = `Answered: ${answered} / ${total}`;
+  countBar.style.width = pct + "%";
+}
+
+// update as teachers choose options
+qWrap.addEventListener('click', e => {
+  if (e.target && e.target.matches('input[type="radio"]')) updateProgress();
+});
+qWrap.addEventListener('change', updateProgress);
+updateProgress();
+
+/* =========================================================
+   3) CLEAR BUTTON
+   ========================================================= */
+document.getElementById('clearBtn').onclick = () => {
+  document.querySelectorAll('input[type="radio"]').forEach(i => i.checked = false);
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
+  updateProgress();
+  window.scrollTo({top:0, behavior:'smooth'});
+};
+
+/* =========================================================
+   4) CONTINUE → VALIDATE → ROUTING → WORKOUT
+   ========================================================= */
+document.getElementById('continueBtn').onclick = () => {
+  const values = App.readAnswers();
+
+  // require all 12
+  const missing = coreItems.filter(q => !values[q.id]);
+  if (missing.length) {
+    alert("Please complete all 12 questions.");
+    return;
   }
 
-  // Delegate events to update progress as choices are made
-  qWrap.addEventListener('click', (e)=>{
-    if(e.target && e.target.matches('input[type="radio"]')) updateProgress();
-  });
-  qWrap.addEventListener('change', updateProgress);
-  updateProgress();
+  // routing + pre‑workout colour
+  const { primary, tags } = App.route(values);
+  const pre = App.computePreColor(values);
 
-  // Clear form
-  document.getElementById('clearBtn').onclick = ()=>{
-    document.querySelectorAll('input[type="radio"]').forEach(i=> i.checked=false);
-    document.querySelectorAll('.opt').forEach(o=> o.classList.remove('selected'));
-    updateProgress();
-    window.scrollTo({top:0, behavior:'smooth'});
-  };
+  // save for workout.html
+  sessionStorage.setItem('screeningAnswers', JSON.stringify(values));
+  sessionStorage.setItem(
+    'screeningRoute',
+    JSON.stringify({ primary, tags, origin: 'teacher-12' })
+  );
+  sessionStorage.setItem('preColor', JSON.stringify(pre));
+  sessionStorage.setItem('planType', 'short-term');
 
-  // Continue → validate → compute route + pre-colour → hand off to workout
-  document.getElementById('continueBtn').onclick = ()=>{
-    const values = App.readAnswers();
-
-    // Require all 12
-    const missing = coreItems.filter(q=> !values[q.id]);
-    if(missing.length){
-      alert('Please complete all 12 questions.');
-      return;
-    }
-
-    // Route + Pre‑Workout colour
-    const {primary, tags} = App.route(values);
-    const pre = App.computePreColor(values);
-
-    // Save to session
-    sessionStorage.setItem('screeningAnswers', JSON.stringify(values));
-    sessionStorage.setItem('screeningRoute',   JSON.stringify({ primary, tags, origin:'teacher-12' }));
-    sessionStorage.setItem('preColor',         JSON.stringify(pre));
-    sessionStorage.setItem('planType',         'short-term');
-
-    // Next page
-    location.href = 'workout.html';
-  };
+  // go to workout
+  location.href = 'workout.html';
+};
 </script>
 
 </body>
