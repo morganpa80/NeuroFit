@@ -4,8 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>NeuroFit — Pupil Check‑In</title>
-
-  <!-- NeuroFit styles -->
   <link rel="stylesheet" href="assets/styles.css" />
 </head>
 
@@ -14,12 +12,13 @@
 <header class="nf-header">
   <div class="wrap flex-between">
     <a href="index.html" class="nf-logo-wrap">
-      <img src="assets/logo.svg" alt="NeuroFit Logo" width="32" height="32" />
+      <img src="assets/logo.svg" width="32" height="32" alt="NeuroFit logo"/>
       <span class="nf-title">NeuroFit</span>
     </a>
-
-    <nav class="nf-nav" aria-label="Primary">
-      <a hrefeck‑In</a>
+    <nav class="nf-nav">
+      <a href="index.html">Home</a>
+      <a href="screening-teacher.html">Teacher Menu</a>
+      <a href="screening-pupil.html" aria-current="page">Pupil Check‑In</a>
     </nav>
   </div>
 </header>
@@ -29,8 +28,7 @@
   <!-- INTRO -->
   <section class="card nf-hero">
     <h1>Pupil Check‑In</h1>
-    <p class="sub">Choose the option that feels most true for you right now. There are no wrong answers.</p>
-
+    <p class="sub">Choose the option that feels true for you. There are no wrong answers.</p>
     <div class="nf-inline-stats" style="margin-top:8px;">
       <div class="pill">Takes ~2 minutes</div>
       <div class="pill">No wrong answers</div>
@@ -44,7 +42,7 @@
 
     <div class="body">
 
-      <!-- PROGRESS -->
+      <!-- Progress -->
       <div class="nf-progress-wrap" style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
         <div id="countText" class="sub">Answered: 0 / 12</div>
         <div style="flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;">
@@ -55,7 +53,7 @@
       <div id="qWrap"></div>
 
       <div class="footer-note" style="margin-top:8px;">
-        Tip: Go with your first thought — this is just a quick check‑in.
+        Tip: Go with your first thought — this is a quick check‑in.
       </div>
     </div>
 
@@ -71,98 +69,117 @@
   <div class="wrap">© NeuroFit</div>
 </footer>
 
-<!-- Core logic -->
 <script src="assets/app.js"></script>
 
+<!-- Sprint Enhancer -->
 <script>
-/* =========================================================
-   1) CHILD‑FRIENDLY QUESTION TEXT
-   ---------------------------------------------------------
-   We keep CORE12 IDs the same so app.js works perfectly,
-   but we override the displayed labels to pupil wording.
-   ========================================================= */
+function enhanceOptionPills({ container, onChange }) {
+  const root = container;
+
+  root.querySelectorAll('input[type="radio"]').forEach(input => {
+    let label = input.closest('label');
+    if (!label) {
+      label = document.createElement('label');
+      input.parentNode.insertBefore(label, input);
+      label.appendChild(input);
+    }
+    label.classList.add('nf-option');
+
+    if (!label.querySelector('.nf-option-text')) {
+      const span = document.createElement('span');
+      span.className = 'nf-option-text';
+      span.textContent = input.value;
+      label.appendChild(span);
+    }
+  });
+
+  function updateSelected(name) {
+    const group = root.querySelectorAll(`input[name="${CSS.escape(name)}"]`);
+    group.forEach(radio => {
+      const pill = radio.closest('.nf-option');
+      if (pill) pill.classList.toggle('selected', radio.checked);
+    });
+  }
+
+  root.addEventListener('change', e => {
+    if (e.target && e.target.matches('input[type="radio"]')) {
+      updateSelected(e.target.name);
+      onChange && onChange();
+    }
+  });
+
+  const names = new Set();
+  root.querySelectorAll('input[type="radio"]').forEach(r => names.add(r.name));
+  names.forEach(updateSelected);
+}
+</script>
+
+<script>
+/* ===== Pupil-friendly labels (mapped to CORE12 IDs) ===== */
 const PUPIL_LABELS = {
-  A1: "How is your energy right now?",
+  A1: "How is your energy?",
   A2: "How easy is it to focus?",
   A3: "How ready do you feel to move?",
   A4: "How does your body feel?",
-  A5: "How are your feelings right now?",
-  B11: "How do your ears feel about noise?",
-  B15: "How much body pressure or squeezing do you like?",
-  B16: "How much do you enjoy turning or rocking?",
-  C21: "How steady do you feel when balancing?",
-  C25: "How easy is it to copy 3–4 short moves?",
+  A5: "How are your feelings?",
+  B11: "How do loud sounds feel?",
+  B15: "Do you like gentle or strong pressure?",
+  B16: "Do you enjoy turning or rocking?",
+  C21: "How steady is your balance?",
+  C25: "Is copying 3–4 moves easy?",
   E35: "Do you feel dizzy when turning?",
-  E39: "Do you need a chair option today?"
+  E39: "Do you need a chair today?"
 };
 
-/* =========================================================
-   2) RENDER CORE12 WITH PUPIL‑FRIENDLY TEXT
-   ========================================================= */
+/* Render CORE12 */
 const qWrap = document.getElementById('qWrap');
-
-// Render teacher-style structure first (CORE12 only)
 App.renderQuestions(qWrap, 'core12');
 
-// Now replace Core12 labels with pupil-friendly versions
+/* Apply pupil labels */
 Object.entries(PUPIL_LABELS).forEach(([id, text]) => {
   const row = qWrap.querySelector(`[data-id="${id}"] label`);
   if (row) row.textContent = text;
 });
 
-/* =========================================================
-   3) PROGRESS TRACKING
-   ========================================================= */
+/* Progress */
 const coreItems = App.CORE12;
 const total = coreItems.length;
 const countText = document.getElementById('countText');
-const countBar = document.getElementById('countBar');
+const countBar  = document.getElementById('countBar');
 
-function updateProgress() {
+function updateProgress(){
   const vals = App.readAnswers();
-  const answered = coreItems.filter(q => vals[q.id]).length;
-  const pct = Math.round((answered / total) * 100);
-
+  const answered = coreItems.filter(q=>vals[q.id]).length;
   countText.textContent = `Answered: ${answered} / ${total}`;
-  countBar.style.width = pct + "%";
+  countBar.style.width = Math.round(answered/total*100) + "%";
 }
 
-// Delegate progress updates
-qWrap.addEventListener('click', e => {
-  if (e.target && e.target.matches('input[type="radio"]')) updateProgress();
-});
-qWrap.addEventListener('change', updateProgress);
+/* APPLY SPRINT UI HERE  */
+enhanceOptionPills({ container: qWrap, onChange: updateProgress });
+
 updateProgress();
 
-/* =========================================================
-   4) CLEAR BUTTON
-   ========================================================= */
-document.getElementById('clearBtn').onclick = () => {
-  qWrap.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
-  qWrap.querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
+/* Clear */
+document.getElementById('clearBtn').onclick = ()=>{
+  qWrap.querySelectorAll('input[type="radio"]').forEach(r=>r.checked=false);
+  qWrap.querySelectorAll('.nf-option').forEach(p=>p.classList.remove('selected'));
   updateProgress();
-  window.scrollTo({top:0, behavior:'smooth'});
+  window.scrollTo({top:0,behavior:'smooth'});
 };
 
-/* =========================================================
-   5) CONTINUE → VALIDATE → STORE → WORKOUT
-   ========================================================= */
+/* Continue */
 document.getElementById('continueBtn').onclick = () => {
   const values = App.readAnswers();
+  const missing = coreItems.filter(q=>!values[q.id]);
+  if(missing.length){ alert("Please answer all 12 questions."); return; }
 
-  const missing = coreItems.filter(q => !values[q.id]);
-  if (missing.length) {
-    alert("Please answer all 12 questions.");
-    return;
-  }
-
-  const { primary, tags } = App.route(values);
+  const {primary, tags} = App.route(values);
   const pre = App.computePreColor(values);
 
-  sessionStorage.setItem('screeningAnswers', JSON.stringify(values));
-  sessionStorage.setItem('screeningRoute', JSON.stringify({ primary, tags, origin:'pupil' }));
-  sessionStorage.setItem('preColor', JSON.stringify(pre));
-  sessionStorage.setItem('planType', 'short-term');
+  sessionStorage.setItem('screeningAnswers',JSON.stringify(values));
+  sessionStorage.setItem('screeningRoute',JSON.stringify({primary,tags,origin:'pupil'}));
+  sessionStorage.setItem('preColor',JSON.stringify(pre));
+  sessionStorage.setItem('planType','short-term');
 
   location.href = 'workout.html';
 };
