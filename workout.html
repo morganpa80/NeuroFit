@@ -8,22 +8,20 @@
   <!-- NeuroFit styles -->
   <link rel="stylesheet" href="assets/styles.css" />
 
+  <!-- Page-specific styling -->
   <style>
-    /* Page-specific touches for the colour gauge and post reflection */
-    .precheck { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin:8px 0 6px; }
-    .gauge { display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; font-weight:700; color:#051014; }
-    .g-red    { background:#ff7d7d; }
-    .g-amber  { background:#ffb56a; }
+    /* (All original custom CSS preserved) */
+    .precheck { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin:8px 0 6px; }        /* from your original file [1](https://whitchurchhighschool129-my.sharepoint.com/personal/morganpa_whitchurch_cardiff_sch_uk/_layouts/15/Doc.aspx?sourcedoc=%7B59360969-9EB3-4A9C-B8BB-83F007795714%7D&file=screening-teacher-12.html.docx&action=default&mobileredirect=true) */
+    .gauge { display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; font-weight:700; color:#051014; }  /* original [1](https://whitchurchhighschool129-my.sharepoint.com/personal/morganpa_whitchurch_cardiff_sch_uk/_layouts/15/Doc.aspx?sourcedoc=%7B59360969-9EB3-4A9C-B8BB-83F007795714%7D&file=screening-teacher-12.html.docx&action=default&mobileredirect=true) */
+    .g-red { background:#ff7d7d; }
+    .g-amber { background:#ffb56a; }
     .g-yellow { background:#ffe66a; }
-    .g-green  { background:#77ffb1; }
-
+    .g-green { background:#77ffb1; }
     .legend { display:flex; gap:8px; align-items:center; color:var(--muted); font-size:.9rem; flex-wrap:wrap }
     .dot { width:10px; height:10px; border-radius:50% }
     .d-red{background:#ff7d7d}.d-amber{background:#ffb56a}.d-yellow{background:#ffe66a}.d-green{background:#77ffb1}
-
     .plan-meta { display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 }
     .pill.blue { border-color:#5CC8FF; }
-
     .color-row{display:flex; gap:8px; flex-wrap:wrap; margin:8px 0}
     .color-tile{
       min-width:92px; padding:10px 12px; text-align:center; border-radius:10px;
@@ -34,7 +32,6 @@
     .color-tile[data-color="amber"]  { background:#ffb56a; }
     .color-tile[data-color="red"]    { background:#ff7d7d; }
     .color-tile.selected{ outline:2px solid #5CC8FF; }
-
     .emoji-row{display:none; gap:10px; font-size:28px; line-height:36px; margin-top:8px}
     .emoji{cursor:pointer; filter:grayscale(60%); transition:.12s}
     .emoji.selected{filter:none; transform:scale(1.05)}
@@ -68,11 +65,13 @@
   <!-- PLAN CARD -->
   <section class="card" aria-labelledby="plan-title">
     <h2 id="plan-title" style="padding-bottom:0;">Your 30‑Minute Plan</h2>
+
     <div class="body">
 
-      <!-- Pre‑Workout colour & meta -->
+      <!-- Pre‑Workout Colour -->
       <div class="precheck" id="preWrap" aria-live="polite"></div>
 
+      <!-- Tags / metadata -->
       <div class="plan-meta" id="planMeta"></div>
 
       <!-- Actions -->
@@ -81,7 +80,7 @@
         <a id="editBtn" class="ghost" href="screening-teacher.html">Edit Answers</a>
       </div>
 
-      <!-- Generated plan -->
+      <!-- Final generated plan -->
       <div id="plan" class="plan"></div>
     </div>
   </section>
@@ -89,13 +88,14 @@
   <!-- POST‑WORKOUT REFLECTION -->
   <section class="card post" aria-labelledby="post-title">
     <h2 id="post-title">How do you feel now?</h2>
+
     <div class="body">
 
       <div class="color-row" id="colorRow">
-        <div class="color-tile" data-color="green"  title="Green — Ready / Regulated" aria-label="Green">🟩 Green</div>
-        <div class="color-tile" data-color="yellow" title="Yellow — Mild dysregulation" aria-label="Yellow">🟨 Yellow</div>
-        <div class="color-tile" data-color="amber"  title="Amber — Moderate dysregulation" aria-label="Amber">🟧 Amber</div>
-        <div class="color-tile" data-color="red"    title="Red — High dysregulation" aria-label="Red">🟥 Red</div>
+        <div class="color-tile" data-color="green"  aria-label="Green">🟩 Green</div>
+        <div class="color-tile" data-color="yellow" aria-label="Yellow">🟨 Yellow</div>
+        <div class="color-tile" data-color="amber"  aria-label="Amber">🟧 Amber</div>
+        <div class="color-tile" data-color="red"    aria-label="Red">🟥 Red</div>
       </div>
 
       <label class="toggle-emoji">
@@ -103,6 +103,94 @@
       </label>
 
       <div class="emoji-row" id="emojiRow" aria-label="Emoji rating">
-        <span class="emoji" data-map="green"  title="Green">😄</span>
-        <span class="emoji" data-map="yellow" title="Yellow">🙂</span>
-        <span
+        <span class="emoji" data-map="green">😄</span>
+        <span class="emoji" data-map="yellow">🙂</span>
+        <span class="emoji" data-map="amber">😕</span>
+        <span class="emoji" data-map="red">😣</span>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="nf-footer">
+  <div class="wrap">© NeuroFit</div>
+</footer>
+
+<!-- Shared App Engine -->
+<script src="assets/app.js"></script>
+
+<!-- =========================================================
+     WORKOUT LOADING LOGIC (this was missing)
+     ========================================================= -->
+<script>
+  // 1. Retrieve the stored screening data
+  const answers = JSON.parse(sessionStorage.getItem('screeningAnswers'));
+  const route   = JSON.parse(sessionStorage.getItem('screeningRoute'));
+  const pre     = JSON.parse(sessionStorage.getItem('preColor'));
+
+  // If missing (e.g. user refreshed), redirect safely
+  if (!answers || !route || !pre) {
+    location.href = "screening-teacher.html";
+  }
+
+  // 2. Insert Pre‑Workout colour
+  const preWrap = document.getElementById("preWrap");
+  if (preWrap) {
+    preWrap.innerHTML = `
+      <span class="gauge g-${pre.color}">
+        ${pre.label} (score ${pre.score})
+      </span>
+    `;
+  }
+
+  // 3. Insert metadata (primary + tags)
+  const meta = document.getElementById("planMeta");
+  if (meta) {
+    meta.innerHTML = `
+      <div class="pill blue">Primary: ${route.primary}</div>
+      ${route.tags.map(t => `<div class="pill">${t}</div>`).join("")}
+    `;
+  }
+
+  // 4. Build 30‑minute plan
+  const plan = document.getElementById("plan");
+  if (plan) {
+    const dom = App.buildPlanDOM(route);
+    plan.appendChild(dom);
+  }
+
+  // 5. Print button
+  document.getElementById('printBtn').onclick = () => window.print();
+
+  // 6. Reflection system (colors + emojis)
+  const colorRow = document.getElementById("colorRow");
+  const emojiRow = document.getElementById("emojiRow");
+  const emojiToggle = document.getElementById("emojiToggle");
+
+  // Switch mode
+  emojiToggle.addEventListener("change", () => {
+    const useEmoji = emojiToggle.checked;
+    emojiRow.style.display = useEmoji ? "flex" : "none";
+    colorRow.style.display = useEmoji ? "none" : "flex";
+  });
+
+  // Select color tile
+  colorRow.addEventListener("click", e => {
+    if (!e.target.classList.contains("color-tile")) return;
+    [...colorRow.children].forEach(c => c.classList.remove("selected"));
+    e.target.classList.add("selected");
+  });
+
+  // Select emoji emoji
+  emojiRow.addEventListener("click", e => {
+    if (!e.target.classList.contains("emoji")) return;
+    [...emojiRow.children].forEach(c => c.classList.remove("selected"));
+    e.target.classList.add("selected");
+  });
+</script>
+
+</body>
+</html>
+``
