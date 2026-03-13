@@ -2,55 +2,164 @@
    NEUROFIT BRAND — GLOBAL STYLESHEET
    Applies to all pages (index, screening, pupil, workout)
 ------------------------------------------------------- */
-
 :root{
   --bg:#0d1117;
   --panel:#11131b;
-
   --ink:#e9eef6;
   --muted:#b9c3d6;
-
   --nf-blue:#5CC8FF;
   --nf-green:#77FFB1;
   --nf-yellow:#FFE66A;
   --nf-amber:#FFB56A;
   --nf-red:#FF7D7D;
-
   --radius:14px;
   --transition:0.2s ease;
 }
 
 /* RESET */
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
+*{ box-sizing:border-box; margin:0; padding:0 */*{ box-sizing:border-box; margin:0; padding:0; }
+.nf-hero{ text-align:center; }
+.nf-hero h1{ font-size:1.9rem; }
+.nf-inline-stats{
+  margin-top:10px;
+  display:flex; justify-content:center; flex-wrap:wrap; gap:6px;
 }
-html,body{height:100%;}
+
+/* TEXT */
+.sub{ color:var(--muted); margin-bottom:10px; font-size:0.95rem; }
+.footer-note{ margin-top:8px; color:var(--muted); font-size:0.85rem; }
+
+/* -----------------------------------------------------
+   BUTTONS
+------------------------------------------------------- */
+button{
+  appearance:none; border:0; border-radius:10px;
+  padding:10px 14px; font-weight:600; font-size:1rem;
+  cursor:pointer; transition:var(--transition);
+  background:linear-gradient(180deg,var(--nf-blue),#46b8ff);
+  color:#03141b;
+}
+button:hover{ transform:translateY(-2px); }
+button.secondary{ background:#2b3243; color:var(--ink); }
+button.ghost{ background:none; border:1px solid rgba(255,255,255,0.2); color:var(--ink); }
+.actions{ padding:14px 16px 16px; display:flex; gap:10px; }
+
+/* -----------------------------------------------------
+   FORMS
+------------------------------------------------------- */
+.nf-field{ display:flex; flex-direction:column; gap:4px; }
+.nf-field select{
+  padding:8px; border-radius:10px;
+  border:1px solid rgba(255,255,255,0.15);
+  background:#0f1520; color:var(--ink);
+}
+.nf-choice-grid{
+  display:grid; gap:20px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  margin-top:10px;
+}
+.nf-choice{ background:#0f1520; border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:16px; }
+.nf-choice h3{ margin-bottom:8px; }
+.nf-bullets{ margin:6px 0 12px 16px; color:var(--muted); }
+.nf-bullets li{ margin:4px 0; }
+
+/* -----------------------------------------------------
+   PROGRESS BAR
+------------------------------------------------------- */
+.nf-progress-wrap{ margin-bottom:10px; }
+.progress-bar-inner{
+  height:100%;
+  background:linear-gradient(90deg,var(--nf-blue),var(--nf-green));
+}
+
+/* -----------------------------------------------------
+   QUESTION LIST (Teacher layout – used by 40Q)
+------------------------------------------------------- */
+.q{ padding:12px 0; border-bottom:1px dashed rgba(255,255,255,.08); }
+.q label{ font-weight:600; }
+.opts{ display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
+.opt{
+  background:#0e111a;
+  border:1px solid rgba(255,255,255,.12);
+  padding:8px 10px; border-radius:10px; cursor:pointer;
+}
+.opt.selected{ outline:2px solid var(--nf-blue); border-color:transparent; }
+
+/* -----------------------------------------------------
+   SPRINT OPTION PILLS (used by Pupil + Teacher‑12)
+------------------------------------------------------- */
+.nf-option input[type="radio"]{
+  position:absolute; opacity:0; pointer-events:none;
+}
+.nf-option{
+  display:inline-flex; align-items:center; justify-content:center;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.18);
+  background:rgba(255,255,255,0.06);
+  padding:10px 12px; cursor:pointer; user-select:none;
+  transition:background .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease;
+  color:#fff;
+  margin:4px;              /* small gap between pills */
+}
+.nf-option:hover{ background:rgba(255,255,255,0.10); }
+.nf-option.selected{
+  background:linear-gradient(135deg,#37c3a8 0%, #58a6ff 100%);
+  color:#0b1b2a; border-color:transparent; font-weight:600;
+}
+.nf-option:focus-within{ outline:2px solid #71D1FF; outline-offset:2px; }
+
+/* -----------------------------------------------------
+   PLAN BLOCKS
+------------------------------------------------------- */
+.plan{ padding:10px 16px 18px; }
+.block{
+  border:1px solid rgba(255,255,255,0.08);
+  background:linear-gradient(180deg,#0f1220,#0e111a);
+  padding:12px; border-radius:12px; margin-bottom:12px;
+}
+.block .title{ display:flex; justify-content:space-between; font-weight:700; }
+.ex{ padding-left:16px; }
+.ex li{ margin:6px 0; }
+
+/* -----------------------------------------------------
+   PILLS
+------------------------------------------------------- */
+.pill{
+  display:inline-flex; align-items:center;
+  padding:4px 10px; border-radius:999px;
+  font-size:0.75rem; color:var(--ink);
+  border:1px solid rgba(255,255,255,0.18);
+}
+.pill.blue{ border-color:var(--nf-blue); color:var(--nf-blue); }
+
+/* -----------------------------------------------------
+   FOOTER
+------------------------------------------------------- */
+.nf-footer{ text-align:center; color:var(--muted); padding:20px; margin-top:20px; }
+
+/* -----------------------------------------------------
+   PRINT MODE
+------------------------------------------------------- */
+@media print{
+  header,nav,.actions,.toggle-emoji,#emojiToggle { display:none!important; }
+  .card{ border:1px solid #ccc; box-shadow:none; }
+}
+``
+html,body{ height:100%; }
 body{
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
   background:linear-gradient(180deg,#0d1117,#0b0d12 30%,#080a0f);
   color:var(--ink);
   line-height:1.4;
 }
-
-a{
-  color:var(--nf-blue);
-  text-decoration:none;
-}
-a:hover{text-decoration:underline;}
+a{ color:var(--nf-blue); text-decoration:none; }
+a:hover{ text-decoration:underline; }
 
 /* WRAPPER */
-.wrap{
-  max-width:1100px;
-  margin:0 auto;
-  padding:20px;
-}
+.wrap{ max-width:1100px; margin:0 auto; padding:20px; }
 
 /* -----------------------------------------------------
    HEADER
 ------------------------------------------------------- */
-
 .nf-header{
   position:sticky; top:0; z-index:100;
   backdrop-filter: blur(12px) saturate(160%);
@@ -58,34 +167,15 @@ a:hover{text-decoration:underline;}
   border-bottom:1px solid rgba(255,255,255,0.06);
   padding:10px 0;
 }
-
-.flex-between{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.nf-logo-wrap{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-.nf-title{
-  font-size:1.4rem;
-  font-weight:700;
-}
-
-.nf-nav a{
-  margin-left:14px;
-  font-size:0.95rem;
-  opacity:0.9;
-}
-.nf-nav a:hover{opacity:1;}
+.flex-between{ display:flex; justify-content:space-between; align-items:center; }
+.nf-logo-wrap{ display:flex; align-items:center; gap:10px; }
+.nf-title{ font-size:1.4rem; font-weight:700; }
+.nf-nav a{ margin-left:14px; font-size:0.95rem; opacity:0.9; }
+.nf-nav a:hover{ opacity:1; }
 
 /* -----------------------------------------------------
    CARDS
 ------------------------------------------------------- */
-
 .card{
   background:linear-gradient(180deg,#121520,#11131b);
   border:1px solid rgba(255,255,255,0.08);
@@ -93,213 +183,6 @@ a:hover{text-decoration:underline;}
   box-shadow:0 10px 28px rgba(0,0,0,0.35);
   margin-bottom:24px;
 }
+.card h1, .card h2{ padding:16px; font-weight:700; }
+.card .body{ padding:12px 16px 18px; }
 
-.card h1, .card h2{
-  padding:16px;
-  font-weight:700;
-}
-.card .body{
-  padding:12px 16px 18px;
-}
-
-/* HERO */
-.nf-hero{
-  text-align:center;
-}
-.nf-hero h1{ font-size:1.9rem; }
-.nf-inline-stats{
-  margin-top:10px;
-  display:flex;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap:6px;
-}
-
-/* TEXT */
-.sub{
-  color:var(--muted);
-  margin-bottom:10px;
-  font-size:0.95rem;
-}
-.footer-note{
-  margin-top:8px;
-  color:var(--muted);
-  font-size:0.85rem;
-}
-
-/* -----------------------------------------------------
-   BUTTONS
-------------------------------------------------------- */
-
-button{
-  appearance:none;
-  border:0;
-  border-radius:10px;
-  padding:10px 14px;
-  font-weight:600;
-  font-size:1rem;
-  cursor:pointer;
-  transition:var(--transition);
-  background:linear-gradient(180deg,var(--nf-blue),#46b8ff);
-  color:#03141b;
-}
-button:hover{ transform:translateY(-2px); }
-
-button.secondary{
-  background:#2b3243;
-  color:var(--ink);
-}
-button.ghost{
-  background:none;
-  border:1px solid rgba(255,255,255,0.2);
-  color:var(--ink);
-}
-.actions{
-  padding:14px 16px 16px;
-  display:flex;
-  gap:10px;
-}
-
-/* -----------------------------------------------------
-   FORMS
-------------------------------------------------------- */
-
-.nf-field{
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-}
-.nf-field select{
-  padding:8px;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,0.15);
-  background:#0f1520;
-  color:var(--ink);
-}
-
-.nf-choice-grid{
-  display:grid;
-  gap:20px;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  margin-top:10px;
-}
-.nf-choice{
-  background:#0f1520;
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:12px;
-  padding:16px;
-}
-.nf-choice h3{
-  margin-bottom:8px;
-}
-.nf-bullets{
-  margin:6px 0 12px 16px;
-  color:var(--muted);
-}
-.nf-bullets li{
-  margin:4px 0;
-}
-
-/* -----------------------------------------------------
-   PROGRESS BAR
-------------------------------------------------------- */
-
-.nf-progress-wrap{
-  margin-bottom:10px;
-}
-.progress-bar-inner{
-  height:100%;
-  background:linear-gradient(90deg,var(--nf-blue),var(--nf-green));
-}
-
-/* -----------------------------------------------------
-   QUESTION LIST
-------------------------------------------------------- */
-
-.q{
-  padding:12px 0;
-  border-bottom:1px dashed rgba(255,255,255,.08);
-}
-.q label{ font-weight:600; }
-
-.opts{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-top:6px;
-}
-.opt{
-  background:#0e111a;
-  border:1px solid rgba(255,255,255,.12);
-  padding:8px 10px;
-  border-radius:10px;
-  cursor:pointer;
-}
-.opt.selected{
-  outline:2px solid var(--nf-blue);
-  border-color:transparent;
-}
-
-/* -----------------------------------------------------
-   PLAN BLOCKS
-------------------------------------------------------- */
-
-.plan{
-  padding:10px 16px 18px;
-}
-.block{
-  border:1px solid rgba(255,255,255,0.08);
-  background:linear-gradient(180deg,#0f1220,#0e111a);
-  padding:12px;
-  border-radius:12px;
-  margin-bottom:12px;
-}
-.block .title{
-  display:flex;
-  justify-content:space-between;
-  font-weight:700;
-}
-.ex{
-  padding-left:16px;
-}
-.ex li{
-  margin:6px 0;
-}
-
-/* -----------------------------------------------------
-   PILLS
-------------------------------------------------------- */
-
-.pill{
-  display:inline-flex;
-  align-items:center;
-  padding:4px 10px;
-  border-radius:999px;
-  font-size:0.75rem;
-  color:var(--ink);
-  border:1px solid rgba(255,255,255,0.18);
-}
-.pill.blue{
-  border-color:var(--nf-blue);
-  color:var(--nf-blue);
-}
-
-/* -----------------------------------------------------
-   FOOTER
-------------------------------------------------------- */
-
-.nf-footer{
-  text-align:center;
-  color:var(--muted);
-  padding:20px;
-  margin-top:20px;
-}
-
-/* -----------------------------------------------------
-   PRINT MODE
-------------------------------------------------------- */
-
-@media print{
-  header,nav,.actions,.toggle-emoji,#emojiToggle { display:none!important; }
-  .card{ border:1px solid #ccc; box-shadow:none; }
-}
