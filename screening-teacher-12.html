@@ -4,7 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>NeuroFit — Teacher Screening (Core‑12)</title>
-  <link rel="stylesheet" href="assets/styles.css" />
+
+  <!-- CACHE-BUSTED STYLESHEET -->
+  <link rel="stylesheet" href="assets/styles.css?v=10" />
 </head>
 
 <body>
@@ -17,13 +19,18 @@
     </a>
     <nav class="nf-nav">
       <a href="index.html">Home</a>
-      <a href="screenO -->
+      <a href="screening-teacher.html">Teacher Menu</a>
+      <a href="screening-pupil.html">Pupil Check‑In</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- INTRO -->
   <section class="card nf-hero">
     <h1>Core‑12 Regulation Screening</h1>
-    <p class="sub">
-      A fast 2‑minute professional snapshot of current regulation status.
-      Produces a full 30‑minute NeuroFit plan.
-    </p>
+    <p class="sub">A fast 2‑minute professional snapshot of regulation status.</p>
     <div class="nf-inline-stats">
       <div class="pill">Core‑12 set</div>
       <div class="pill">Pre‑Workout colour computed</div>
@@ -36,8 +43,6 @@
     <h2>Core‑12 Questionnaire</h2>
 
     <div class="body">
-
-      <!-- Progress -->
       <div class="nf-progress-wrap" style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
         <div id="countText" class="sub">Answered: 0 / 12</div>
         <div style="flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;">
@@ -48,8 +53,7 @@
       <div id="qWrap"></div>
 
       <div class="footer-note" style="margin-top:8px;">
-        Need a deeper profile? Use the 
-        <a href="screening-teacher-40.html">40‑question full screen</a>.
+        Need a deeper profile? Use the <a href="screening-teacher-40.html">40‑question screen</a>.
       </div>
     </div>
 
@@ -58,7 +62,6 @@
       <button id="clearBtn" class="secondary">Clear</button>
     </div>
   </section>
-
 </main>
 
 <footer class="nf-footer">
@@ -69,7 +72,6 @@
 
 <!-- Sprint Enhancer -->
 <script>
-/* (same enhancer as pupil page) */
 function enhanceOptionPills({ container, onChange }) {
   const root = container;
 
@@ -112,11 +114,9 @@ function enhanceOptionPills({ container, onChange }) {
 </script>
 
 <script>
-/* Render Core12 */
 const qWrap = document.getElementById('qWrap');
 App.renderQuestions(qWrap, 'core12');
 
-/* Progress */
 const coreItems = App.CORE12;
 const total = coreItems.length;
 const countText = document.getElementById('countText');
@@ -129,12 +129,9 @@ function updateProgress(){
   countBar.style.width = Math.round(answered/total*100) + "%";
 }
 
-/* APPLY SPRINT UI HERE  */
 enhanceOptionPills({ container: qWrap, onChange: updateProgress });
-
 updateProgress();
 
-/* Clear */
 document.getElementById('clearBtn').onclick = ()=>{
   qWrap.querySelectorAll('input[type="radio"]').forEach(r=>r.checked=false);
   qWrap.querySelectorAll('.nf-option').forEach(p=>p.classList.remove('selected'));
@@ -142,7 +139,6 @@ document.getElementById('clearBtn').onclick = ()=>{
   window.scrollTo({top:0,behavior:'smooth'});
 };
 
-/* Continue */
 document.getElementById('continueBtn').onclick = () => {
   const values = App.readAnswers();
   const missing = coreItems.filter(q=>!values[q.id]);
@@ -162,4 +158,3 @@ document.getElementById('continueBtn').onclick = () => {
 
 </body>
 </html>
-``
