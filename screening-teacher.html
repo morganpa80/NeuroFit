@@ -3,111 +3,92 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>NeuroFit Planner — Teacher</title>
+  <title>NeuroFit — Teacher Menu</title>
 
   <!-- NeuroFit styles -->
-  assets/styles.css
+  <link rel="stylesheet" href="assets/styles.css" />
 </head>
 
 <body>
-
 <header class="nf-header">
   <div class="wrap flex-between">
-    index.html
-      assets/logo.svg
+    <a href="index.html" class="nf-logo-wrap">
+      <img src="assets/logo.svg" alt="NeuroFit logo" width="32" height="32" />
       <span class="nf-title">NeuroFit</span>
     </a>
-
-    <nav class="nf-nav">
-      index.htmlHome</a>
-      screening-pupil.htmlPupil Check‑In (Preview)</a>
+    <nav class="nf-nav" aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="screening-teacher.html" aria-current="page">Teacher Menu</a>
+      <a href="screening-pupil.html">Pupil Check‑In</a>
     </nav>
   </div>
 </header>
 
 <main class="wrap">
 
-  <!-- INTRO -->
+  <!-- HERO / INTRO -->
   <section class="card nf-hero">
-    <h1>NeuroFit Planner — Teacher</h1>
+    <h1>Teacher Screening Menu</h1>
     <p class="sub">
-      Choose your screening route. Build a structured <b>6‑Week Plan</b> (40Q), a fast
-      <b>Short‑Term Activity</b> (Core‑12), or preview the <b>Pupil Check‑In</b>.
+      Choose the screening that best fits your time and purpose. You can start with the Core‑12 for
+      a rapid snapshot, or run the full 40‑question screen for a deeper profile that informs
+      planning and targeted regulation.
     </p>
+
+    <div class="nf-inline-stats" style="margin-top:8px;">
+      <div class="pill">Teacher tools</div>
+      <div class="pill">Pre‑Workout colour computed</div>
+      <div class="pill">Routes to plan builder</div>
+    </div>
   </section>
 
-  <!-- CHOICES GRID -->
-  <section class="card">
-    <h2 style="padding-bottom:0;">Choose a Path</h2>
+  <!-- OPTIONS -->
+  <section class="card" style="margin-top:24px;">
+    <h2>Choose a Screening</h2>
+
     <div class="body">
-      <div class="nf-choice-grid">
+      <!-- Core-12 -->
+      <article class="nf-option" style="margin-bottom:14px;">
+        <h3>Core‑12 (Short‑Term)</h3>
+        <p class="sub">
+          Fast, classroom‑friendly check (≈2–3 minutes). Captures the essentials:
+          energy, focus, motivation, vestibular/proprioceptive preferences, and
+          seated/quiet needs. Computes a pre‑workout colour and routes to a
+          short, targeted plan.
+        </p>
+        <div class="actions">
+          <a class="nf-btn" href="screening-teacher-12.html">Start Core‑12</a>
+        </div>
+      </article>
 
-        <!-- 6-WEEK PLAN (40Q) -->
-        <article class="nf-choice">
-          <h3>6‑Week Plan</h3>
-          <p class="sub">Full 40‑question screen → robust plan + progression.</p>
-          <ul class="nf-bullets">
-            <li>Comprehensive A–E domains.</li>
-            <li>Auto‑routed workout type + modifiers.</li>
-            <li>Ideal for targeted intervention records.</li>
-          </ul>
-          <div class="actions">
-            screening-teacher-40.htmlStart 40‑Question Screen</a>
-          </div>
-        </article>
+      <hr class="nf-divider" />
 
-        <!-- SHORT-TERM ACTIVITY (Core-12) -->
-        <article class="nf-choice">
-          <h3>Short‑Term Activity</h3>
-          <p class="sub">Core‑12 screen → fast, actionable routine.</p>
-          <ul class="nf-bullets">
-            <li>Quick regulation snapshot.</li>
-            <li>Used by both pupils and teachers.</li>
-            <li>Print & share immediately.</li>
-          </ul>
+      <!-- Full 40 -->
+      <article class="nf-option">
+        <h3>Full 40‑Question Screening</h3>
+        <p class="sub">
+          Comprehensive profile (≈6–8 minutes). Adds deeper sensory and sequencing items
+          for a richer baseline and more nuanced plan recommendations. Best for reviews,
+          referrals, or when patterns are unclear.
+        </p>
+        <div class="actions">
+          <a class="nf-btn secondary" href="screening-teacher-40.html">Start Full 40</a>
+        </div>
+      </article>
+    </div>
 
-          <!-- Core‑12 preview -->
-          <div style="margin:10px 0;">
-            <strong>Core‑12 Items:</strong>
-            <ul class="nf-bullets">
-              <li>A1 — Energy</li>
-              <li>A2 — Focus</li>
-              <li>A3 — Motivation</li>
-              <li>A4 — Body Feeling</li>
-              <li>A5 — Emotional State</li>
-              <li>B11 — Sound Tolerance</li>
-              <li>B15 — Proprioceptive Preference</li>
-              <li>B16 — Vestibular Preference</li>
-              <li>C21 — Balance Confidence</li>
-              <li>C25 — Sequencing 3–4 Moves</li>
-              <li>E35 — Dizziness When Turning</li>
-              <li>E39 — Need Seated Options</li>
-            </ul>
-          </div>
+    <div class="footer-note" style="margin-top:10px;">
+      Tip: If time is tight, begin with Core‑12. You can always complete the full 40 later.
+    </div>
+  </section>
 
-          <div class="actions">
-            screening-teacher-12.htmlStart Core‑12 Screen</a>
-          </div>
-        </article>
-
-        <!-- PUPIL PREVIEW -->
-        <article class="nf-choice">
-          <h3>Pupil Check‑In</h3>
-          <p class="sub">Click‑based ❌ / • / ❤️ answers (one card at a time).</p>
-          <ul class="nf-bullets">
-            <li>Low cognitive load, mobile friendly.</li>
-            <li>Shared Core‑12 with teacher view.</li>
-            <li>Routes straight to a printable plan.</li>
-          </ul>
-          <div class="actions">
-            screening-pupil.htmlOpen Pupil Check‑In</a>
-          </div>
-        </article>
-
-      </div>
-
-      <div class="footer-note" style="margin-top:10px;">
-        Data moves between pages using <code>sessionStorage</code> (per tab/session). Nothing is stored permanently unless you export feedback CSV.
+  <!-- Return home -->
+  <section class="card" style="margin-top:24px;">
+    <h2>Other Actions</h2>
+    <div class="body">
+      <p class="sub">Need a quick regulation plan without screening?</p>
+      <div class="actions">
+        <a class="nf-btn" href="index.html">Back to Home</a>
       </div>
     </div>
   </section>
@@ -115,12 +96,10 @@
 </main>
 
 <footer class="nf-footer">
-  <div class="wrap">
-    <span>© NeuroFit</span>
-  </div>
+  <div class="wrap">© NeuroFit</div>
 </footer>
 
-<!-- Shared App Engine (routing, CORE‑12, plan builder, etc.) -->
-assets/app.js</script>
+<!-- No scripts needed on this menu page -->
 </body>
 </html>
+``
