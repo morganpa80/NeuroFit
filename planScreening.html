@@ -1,1 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NeuroFit • Screening</title>
+  <meta name="description" content="Adaptive screening to build your personalised NeuroFit plan." />
 
+  <!-- Global Styles -->
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <!-- Skip link -->
+  <a class="visually-hidden" href="#main-content">Skip to main content</a>
+
+  <!-- Header -->
+  <header class="site" role="banner">
+    <div class="wrap brand">
+      <img src="assets/img/logo.svg" width="40" height="40" alt="NeuroFit logo" />
+      <h1>NeuroFit</h1>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main id="main-content" class="wrap" role="main" aria-describedby="screening-intro">
+    <section class="nf-hero" aria-label="Screening">
+      <div class="nf-hero-head">
+        <h2 class="nf-hero-title">Your Plan, Your Way</h2>
+        <p id="screening-intro" class="nf-hero-sub">
+          Your questions adapt to your answers so your 6‑week plan fits how your body and mind usually feel.
+        </p>
+      </div>
+
+      <!-- Progress -->
+      <div class="nf-hero-meta" id="progressText">Step 1 of ~40‑ish</div>
+    </section>
+
+    <!-- Question card -->
+    <section id="qCard" class="card" role="group" aria-live="polite" aria-atomic="true" aria-relevant="additions">
+      <!-- Populated by screening.js -->
+    </section>
+
+    <!-- Controls -->
+    <div style="display:flex; gap:8px; margin-top:12px;">
+      <button id="backBtn" class="btn secondary" type="button">Back</button>
+      <button id="nextBtn" class="btn" type="button">Continue</button>
+      <button id="finishBtn" class="btn" type="button" hidden>Build My Plan</button>
+    </div>
+
+    <p class="footnote">You can go back to change answers except on safety confirmations.</p>
+  </main>
+
+  <!-- Scripts -->
+  <script src="assets/js/screening.js"></script>
+</body>
+</html>
