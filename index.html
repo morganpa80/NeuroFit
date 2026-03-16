@@ -7,21 +7,20 @@
   <meta name="description" content="NeuroFit: Personalised movement and regulation support you can use today." />
 
   <!-- Global Styles -->
-  assets/css/styles.css
+  <link rel="stylesheet" href="assets/css/styles.css">
 
-  <!-- Favicons / Icons (optional but recommended) -->
-  <!-- If you have these files, keep them. Otherwise you can delete these two lines safely. -->
-  assets/img/logo.svg
-  assets/img/icon-192.png
+  <!-- Favicons / Icons -->
+  <link rel="icon" href="assets/img/logo.svg">
 </head>
 <body>
-  <!-- Skip link for keyboard users -->
-  #main-contentSkip to main content</a>
+
+  <!-- Skip link -->
+  <a class="skip-link" href="#main-content">Skip to main content</a>
 
   <!-- Site Header -->
   <header class="site" role="banner">
     <div class="wrap brand">
-      assets/img/logo.svg
+      <img src="assets/img/logo.svg" alt="NeuroFit logo" width="40" height="40">
       <h1>NeuroFit</h1>
     </div>
   </header>
@@ -38,9 +37,10 @@
       <p class="nf-hero-meta">Choose what you need today.</p>
 
       <!-- CTA GRID -->
-      <div class="grid-3" role="list">
+      <div class="grid-3">
+        
         <!-- A) Plan -->
-        <article class="card" role="listitem">
+        <article class="card">
           <p class="kicker">NeuroFit —</p>
           <h3 class="title">Your Plan, Your Way</h3>
           <p class="tag">A personalised profile that creates a plan designed for you.</p>
@@ -48,7 +48,7 @@
             A guided, adaptive screening that responds to your answers and builds a tailored 6‑week movement programme.
           </p>
           <div>
-            planScreening.htmlStart Personal Plan</a>
+            <a class="btn" href="planScreening.html" aria-describedby="plan-desc">Start Personal Plan</a>
             <p id="plan-desc" class="visually-hidden">
               Opens the adaptive screening to build your personalised programme.
             </p>
@@ -56,7 +56,7 @@
         </article>
 
         <!-- B) Ground & Go -->
-        <article class="card" role="listitem">
+        <article class="card">
           <p class="kicker">NeuroFit</p>
           <h3 class="title">Ground &amp; Go</h3>
           <p class="tag">Small shift, big difference.</p>
@@ -64,12 +64,12 @@
             A short, guided session that meets you where you are right now and supports a quick return to calm, focus and readiness.
           </p>
           <div>
-            groundgo.htmlStart Ground &amp; Go</a>
+            <a class="btn secondary" href="groundgo.html">Start Ground &amp; Go</a>
           </div>
         </article>
 
         <!-- C) Pulse -->
-        <article class="card" role="listitem">
+        <article class="card">
           <p class="kicker">NeuroFit</p>
           <h3 class="title">Pulse</h3>
           <p class="tag">One minute. One move. One fresh start.</p>
@@ -77,9 +77,10 @@
             A tailored micro‑activity for right now — a mindfulness moment, a grounding drill, or a simple movement burst.
           </p>
           <div>
-            pulse.htmlTry Pulse</a>
+            <a class="btn ghost" href="pulse.html">Try Pulse</a>
           </div>
         </article>
+
       </div>
 
       <p class="footnote">
@@ -87,5 +88,6 @@
       </p>
     </section>
   </main>
+
 </body>
 </html>
