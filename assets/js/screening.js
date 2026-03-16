@@ -1,86 +1,86 @@
-<script>
 // =============================
-// NeuroFit Screening – Scaffold
+// NeuroFit – Screening (Scaffold)
 // =============================
 
-// --- Config: target count ~40-ish (default weight towards 41)
+// --- Display target: "~40-ish" (default 41; we can randomise later)
 const DISPLAY_TARGET_CHOICES = [38, 39, 40, 41, 42];
-const displayTarget = 41; // we can randomise later if you prefer
-// const displayTarget = DISPLAY_TARGET_CHOICES[Math.floor(Math.random()*DISPLAY_TARGET_CHOICES.length)];
+const displayTarget = 41;
+// If you want entropy right now, uncomment:
+// const displayTarget = DISPLAY_TARGET_CHOICES[Math.floor(Math.random() * DISPLAY_TARGET_CHOICES.length)];
 
+// --- Minimal state for the sprint flow
 const state = {
-  step: 0,                       // 0-based index
-  answers: {},                   // { qid: value }
-  path: [],                      // array of question objects in the order shown
-  lockedBackFor: new Set(),      // qids that are safety confirmations
-  preColor: null,                // placeholder for your pre-color / state logic
-  planType: '6-week'
+  step: 0,                 // 0-based index into `path`
+  answers: {},             // { qid: value }
+  path: [],                // the ordered list of items we show this run
+  planType: '6-week',
 };
 
-// --- Placeholder questions (will be replaced by your adaptive selector)
+// --- TEMP questions (for page flow ONLY)
+// We'll replace this with your adaptive 60 -> ~40 selector in Step 2.5
 const SEED_QUESTIONS = [
   {
     id: 'A1',
     text: 'How would you describe your general energy level most weeks?',
     type: 'likert5',
-    options: ['Very low','Low','Moderate','High','Very high'],
+    options: ['Very low', 'Low', 'Moderate', 'High', 'Very high'],
     group: 'A', pillar: 'GROUND'
   },
   {
     id: 'B2',
     text: 'How important is improving balance & stability to you?',
     type: 'likert5',
-    options: ['Not at all','Low','Moderate','High','Very high'],
+    options: ['Not at all', 'Low', 'Moderate', 'High', 'Very high'],
     group: 'B', pillar: 'GROW'
   },
   {
     id: 'F2',
     text: 'Do you experience dizziness with turning or rising quickly?',
-    type: 'boolean', // safety confirmation – Back will be locked here
-    options: ['No','Yes'],
+    type: 'boolean',
+    options: ['No', 'Yes'],
     group: 'F', pillar: 'SAFETY', safety: true
   }
 ];
 
-// For scaffold, our path == seed questions.
-// Later this will be the adaptive 60→~40 selection.
+// For the scaffold, just use the seed path:
 state.path = [...SEED_QUESTIONS];
 
-// ---------- DOM refs
+// --- DOM refs
 const qCard = document.getElementById('qCard');
 const progressText = document.getElementById('progressText');
 const backBtn = document.getElementById('backBtn');
 const nextBtn = document.getElementById('nextBtn');
 const finishBtn = document.getElementById('finishBtn');
 
-// ---------- Render
+// --- Render a single step
 function render() {
   const i = state.step;
-  const total = state.path.length; // for scaffold; later show "~40-ish"
   const item = state.path[i];
   if (!item) return;
 
-  // Progress text (playful)
+  // Progress (playful)
   progressText.textContent = `Step ${i + 1} of ~${displayTarget}-ish`;
 
-  // Build the card
+  // Build options UI (pills)
   qCard.innerHTML = `
     <div class="nf-q">
-      <h3 class="title" id="qTitle">${item.text}</h3>
+      <h3 class="title" id="qTitle">${escapeHtml(item.text)}</h3>
       <div class="sub" id="qHelp">${helpText(item)}</div>
-      <div class="nf-options" role="radiogroup" aria-labelledby="qTitle" style="display:grid; gap:8px; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); margin-top:10px;">
+
+      <div class="nf-options" role="radiogroup" aria-labelledby="qTitle"
+           style="display:grid; gap:8px; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); margin-top:10px;">
         ${renderOptions(item)}
       </div>
     </div>
   `;
 
-  // Restore selection if answered
-  if (state.answers[item.id] !== undefined) {
-    const val = state.answers[item.id];
-    const el = qCard.querySelector(`[data-value="${cssEscape(val)}"]`);
-    if (el) {
-      el.classList.add('selected');
-      const input = el.querySelector('input');
+  // Restore selection if already answered
+  const prev = state.answers[item.id];
+  if (prev !== undefined) {
+    const selected = qCard.querySelector(`.nf-option[data-value="${cssEscape(prev)}"]`);
+    if (selected) {
+      selected.classList.add('selected');
+      const input = selected.querySelector('input');
       if (input) input.checked = true;
       nextBtn.disabled = false;
     }
@@ -88,8 +88,8 @@ function render() {
     nextBtn.disabled = true;
   }
 
-  // Back/Next/Finish visibility
-  backBtn.disabled = shouldLockBack(item);
+  // Controls
+  backBtn.disabled = !!item.safety;             // Back locked on safety confirmations
   nextBtn.hidden = (i === state.path.length - 1);
   finishBtn.hidden = !nextBtn.hidden;
 }
@@ -107,7 +107,6 @@ function renderOptions(item) {
   if (item.type === 'boolean') {
     return item.options.map((label, idx) => pill(item.id, idx, label)).join('');
   }
-  // extend for multiselect later
   return '';
 }
 
@@ -115,83 +114,79 @@ function pill(qid, value, label) {
   return `
     <label class="nf-option" data-qid="${qid}" data-value="${value}"
            style="display:inline-flex; align-items:center; justify-content:center; border-radius:999px; border:1px solid var(--nf-grey-200); background:#fff; padding:10px 12px; cursor:pointer; user-select:none;">
-      <input type="radio" name="${qid}" value="${value}" aria-label="${escapeHtml(label)}" style="position:absolute; opacity:0; pointer-events:none;">
+      <input type="radio" name="${qid}" value="${value}" aria-label="${escapeHtml(label)}"
+             style="position:absolute; opacity:0; pointer-events:none;">
       <span>${escapeHtml(label)}</span>
     </label>
   `;
 }
 
-function shouldLockBack(item) {
-  // Back is locked on safety confirmations only (your rule)
-  return !!item.safety;
-}
-
-// ---------- Events
+// --- Events (pills + nav)
 qCard.addEventListener('click', (e) => {
   const pill = e.target.closest('.nf-option');
   if (!pill) return;
   const qid = pill.getAttribute('data-qid');
   const value = pill.getAttribute('data-value');
 
-  // clear group selection
+  // Clear group selection and set new
   qCard.querySelectorAll(`.nf-option[data-qid="${cssEscape(qid)}"]`).forEach(p => p.classList.remove('selected'));
   pill.classList.add('selected');
 
-  // store answer
-  state.answers[qid] = isNaN(Number(value)) ? value : Number(value);
+  // Store answer (numbers for likert & boolean)
+  const numeric = Number(value);
+  state.answers[qid] = Number.isNaN(numeric) ? value : numeric;
+
   nextBtn.disabled = false;
 });
 
 backBtn.addEventListener('click', () => {
   const item = state.path[state.step];
-  if (shouldLockBack(item)) return; // safeguard
+  if (item?.safety) return; // safeguard
   state.step = Math.max(0, state.step - 1);
   render();
 });
 
 nextBtn.addEventListener('click', () => {
-  // require an answer before continuing
   const item = state.path[state.step];
-  if (state.answers[item.id] === undefined) return;
-  // advance
+  if (state.answers[item.id] === undefined) return; // must answer
   state.step = Math.min(state.path.length - 1, state.step + 1);
   render();
 });
 
 finishBtn.addEventListener('click', () => {
-  // ensure last question answered
   const item = state.path[state.step];
-  if (state.answers[item.id] === undefined) return;
+  if (state.answers[item.id] === undefined) return; // must answer
 
-  // ----- derive minimal route bundle (placeholder)
+  // --- Minimal routing bundle (placeholder for now)
   const screeningAnswers = state.answers;
 
-  // Example mapping for preColor (your state/zone precursor) – to be replaced by RI calc
-  const avgEnergy = Number(screeningAnswers['A1'] || 3);
-  const preColor = avgEnergy <= 2 ? 'blue' : (avgEnergy >= 4 ? 'yellow' : 'green');
+  // Simple preColor example: will be replaced by RI/Zone mapping
+  const energy = Number(screeningAnswers['A1'] ?? 3);
+  const preColor = energy <= 2 ? 'blue' : (energy >= 4 ? 'yellow' : 'green');
 
-  // Route payload (extend later)
   const screeningRoute = {
     origin: 'screening-adaptive',
-    version: 'v1-scaffold',
-    // add tags later (goal_strength, safety_dizzy, etc.)
+    version: 'v0-scaffold'
+    // Tags & composites added in Step 2.5
   };
 
-  // Write required sessionStorage keys
+  // Required storage keys for workout.html
   sessionStorage.setItem('screeningAnswers', JSON.stringify(screeningAnswers));
   sessionStorage.setItem('screeningRoute', JSON.stringify(screeningRoute));
   sessionStorage.setItem('preColor', JSON.stringify(preColor));
   sessionStorage.setItem('planType', '6-week');
 
-  // Navigate to workout
+  // Navigate to plan
   location.href = 'workout.html';
 });
 
-// ---------- Utils
-function escapeHtml(s=''){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function cssEscape(s){ return String(s).replace(/"/g,'\\"'); }
+// --- Utils
+function escapeHtml(s = '') {
+  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function cssEscape(s) {
+  return String(s).replace(/"/g, '\\"');
+}
 
-// ---------- Init
+// --- Init
 render();
-</script>
-``
