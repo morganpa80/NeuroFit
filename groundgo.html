@@ -1,1 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NeuroFit • Ground &amp; Go (10‑minute reset)</title>
 
+  <!-- Global Styles -->
+  <link rel="stylesheet" href="assets/css/styles.css" />
+
+  <!-- Page-specific (print-friendly) -->
+  <style>
+    .section-title{
+      font-size:1.25rem; font-weight:800; color:var(--nf-blue-900);
+      border-bottom:2px solid var(--nf-grey-200); padding-bottom:6px;
+      margin:22px 0 10px;
+    }
+    .exercise-block{ padding:10px 0; border-bottom:1px solid var(--nf-grey-200); }
+    .exercise-title{ font-weight:700; color:var(--nf-blue-700); margin:0 0 4px; }
+    .exercise-cue{ color:var(--nf-grey-700); margin:0 0 4px; }
+    .exercise-info{ color:var(--nf-grey-600); font-size:.95rem; margin:0; }
+
+    .form-grid{ display:grid; gap:10px; grid-template-columns:1fr; }
+    @media (min-width:680px){ .form-grid{ grid-template-columns:repeat(3,1fr); } }
+
+    .print-btn{ margin: 18px 0; padding: 12px 18px; border-radius:10px;
+      background: var(--nf-blue-700); color:#fff; font-weight:700; border:0; cursor:pointer; }
+    .print-btn[disabled]{ opacity:.6; cursor:not-allowed; }
+
+    .feedback-wrap{ margin-top:18px; text-align:center; }
+    .feedback-btn{
+      margin:6px; padding:10px 14px; border-radius:10px;
+      border:1px solid var(--nf-blue-700); background:#fff; cursor:pointer; font-weight:600;
+    }
+    .feedback-btn:hover{ background:#eef6ff; }
+
+    @media print{
+      header.site, .builder, .feedback-wrap, .print-btn { display:none !important; }
+      .nf-hero{ border:none; box-shadow:none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Skip link -->
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <!-- Header -->
+  <header class="site" role="banner">
+    <div class="wrap brand">
+      <img src="assets/img/logo.svg" alt="NeuroFit logo" width="40" height="40" />
+      <h1>NeuroFit</h1>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main id="main-content" class="wrap" role="main">
+
+    <!-- Intro -->
+    <section class="nf-hero" aria-labelledby="gg-title">
+      <div class="nf-hero-head">
+        <h2 id="gg-title" class="nf-hero-title">NeuroFit Ground &amp; Go</h2>
+        <p class="nf-hero-sub">
+          A short, guided 10‑minute session that meets you where you are right now.
+        </p>
+      </div>
+      <p class="nf-hero-meta">Pick what fits best and we’ll build a supportive reset.</p>
+    </section>
+
+    <!-- Builder form -->
+    <section class="card builder" aria-label="Ground & Go builder" style="margin-top:12px;">
+      <div class="form-grid">
+        <!-- State -->
+        <label class="nf-field">
+          <span class="title" style="font-size:1rem;">Current state</span>
+          <select id="gg-state" aria-label="Current state">
+            <option value="steady" selected>Steady &amp; Ready</option>
+            <option value="low">Low &amp; Flat</option>
+            <option value="wound">Wound Up / On Edge</option>
+            <option value="overloaded">Overloaded</option>
+          </select>
+        </label>
+
+        <!-- Environment -->
+        <label class="nf-field">
+          <span class="title" style="font-size:1rem;">Environment</span>
+          <select id="gg-env" aria-label="Environment">
+            <option value="standard" selected>Standard</option>
+            <option value="quiet">Quiet needed</option>
+          </select>
+        </label>
+
+        <!-- Seated -->
+        <label class="nf-field">
+          <span class="title" style="font-size:1rem;">Prefer seated?</span>
+          <select id="gg-seat" aria-label="Prefer seated">
+            <option value="no" selected>No</option>
+            <option value="yes">Yes</option>
+          </select>
+        </label>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:12px;">
+        <button id="gg-build" class="btn" type="button">Build 10‑minute Reset</button>
+        <button id="gg-print" class="print-btn" type="button" disabled>Print This Reset</button>
+      </div>
+    </section>
+
+    <!-- Output -->
+    <section id="gg-output" aria-live="polite" aria-atomic="true" style="margin-top:12px;"></section>
+
+    <!-- Feedback -->
+    <div class="feedback-wrap">
+      <h3>How do you feel now?</h3>
+      <button class="feedback-btn" data-fb="Relaxed">Relaxed</button>
+      <button class="feedback-btn" data-fb="Grounded">Grounded</button>
+      <button class="feedback-btn" data-fb="Feel Good">Feel Good</button>
+      <button class="feedback-btn" data-fb="Still Tense">Still Tense</button>
+      <button class="feedback-btn" data-fb="Need a Break">Need a Break</button>
+      <p id="fb-note" class="sub" style="margin-top:6px;"></p>
+    </div>
+
+  </main>
+
+  <!-- JS -->
+  <script src="assets/js/groundgo.js"></script>
+</body>
+</html>
+``
