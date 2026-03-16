@@ -17,14 +17,12 @@
             background: var(--nf-blue-300);
             border-color: var(--nf-blue-700);
         }
-        .skip-link {
-            position: absolute; left: -999px; top: -999px;
-        }
+        .skip-link { position:absolute; left:-999px; top:-999px; }
         .skip-link:focus {
-            left: 20px; top: 20px;
-            background: #fff;
-            padding: 8px 10px;
-            border: 2px solid var(--nf-blue-700);
+            left:20px; top:20px;
+            background:#fff;
+            padding:8px 10px;
+            border:2px solid var(--nf-blue-700);
         }
     </style>
 </head>
@@ -62,7 +60,6 @@
              role="region"
              aria-live="polite"
              aria-atomic="true">
-        <!-- screening.js injects question here -->
     </section>
 
     <!-- Controls -->
@@ -79,10 +76,6 @@
 </main>
 
 <!-- JS ENGINE (order matters) -->
-<script src="assets></script>
-
-<!-- Sprint UI Controller -->
-<script src="assets/js/screening.js"></script>
-
-</body>
-</html>
+<script src="assets/js/questions.js"></script>
+<script src="assets/js/logic.js"></script>
+<script src="assets/js
