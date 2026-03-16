@@ -1,4 +1,18 @@
------START-JS-----
+// =============================================================
+// NeuroFit — Screening (Minimal Working Scaffold)
+// =============================================================
+
+// --- Display target "~40-ish" (just for the progress text)
+const DISPLAY_TARGET = 41;
+
+// --- Minimal state for the sprint flow
+const state = {
+  step: 0,
+  answers: {},
+  path: []
+};
+
+// --- Tiny placeholder path (3 questions)
 const QUESTIONS = [
   {
     id: "A1",
@@ -21,81 +35,99 @@ const QUESTIONS = [
   }
 ];
 
-const state = { step:0, answers:{}, path:[...QUESTIONS] };
+// Use this sample for now
+state.path = [...QUESTIONS];
 
-const qCard=document.getElementById("qCard");
-const progress=document.getElementById("progressText");
-const back=document.getElementById("backBtn");
-const next=document.getElementById("nextBtn");
-const finish=document.getElementById("finishBtn");
+// --- DOM
+const qCard       = document.getElementById("qCard");
+const progressTxt = document.getElementById("progressText");
+const backBtn     = document.getElementById("backBtn");
+const nextBtn     = document.getElementById("nextBtn");
+const finishBtn   = document.getElementById("finishBtn");
 
-function render(){
-  const item=state.path[state.step];
-  progress.textContent = `Step ${state.step+1} of ~40ish`;
+// --- Render
+function render() {
+  const i = state.step;
+  const item = state.path[i];
+
+  progressTxt.textContent = `Step ${i + 1} of ~${DISPLAY_TARGET}-ish`;
+
   qCard.innerHTML = `
-    <h3 class="title">${item.text}</h3>
-    <div class="sub">${item.type==="likert5"?"Choose the option that fits your usual week":"Please choose one option."}</div>
+    <h3 class="title" id="qTitle">${item.text}</h3>
+    <div class="sub">${item.type==="likert5" ? "Choose the option that matches your typical week." : "Choose one option."}</div>
     <div class="nf-options" style="display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));margin-top:12px;">
       ${renderOptions(item)}
     </div>
   `;
+
   restore(item);
-  next.hidden = state.step === state.path.length-1 ? true : false;
-  finish.hidden = !next.hidden;
+  nextBtn.hidden   = (i === state.path.length - 1);
+  finishBtn.hidden = !nextBtn.hidden;
 }
 
-function renderOptions(item){
-  if(item.type==="likert5"){
-    return item.options.map((l,i)=>pill(item.id,i+1,l)).join("");
+function renderOptions(item) {
+  if (item.type === "likert5") {
+    return item.options.map((label, idx) => pill(item.id, idx+1, label)).join("");
   }
-  if(item.type==="boolean"){
-    return item.options.map((l,i)=>pill(item.id,i,l)).join("");
+  if (item.type === "boolean") {
+    return item.options.map((label, idx) => pill(item.id, idx, label)).join("");
   }
 }
 
-function pill(qid,val,label){
+function pill(qid, value, label) {
   return `
-  <label class="nf-option" data-qid="${qid}" data-value="${val}"
-    style="display:flex;align-items:center;justify-content:center;padding:10px;border:1px solid #ddd;border-radius:999px;cursor:pointer;">
-    <input type="radio" name="${qid}" value="${val}" style="opacity:0;position:absolute;">
-    <span>${label}</span>
-  </label>`;
+    <label class="nf-option" data-qid="${qid}" data-value="${value}"
+           style="display:flex;align-items:center;justify-content:center;padding:10px;border-radius:999px;border:1px solid #ddd;cursor:pointer;">
+      <input type="radio" name="${qid}" value="${value}" style="opacity:0;position:absolute;">
+      <span>${label}</span>
+    </label>
+  `;
 }
 
-qCard.addEventListener("click",e=>{
-  const opt=e.target.closest(".nf-option");
-  if(!opt)return;
-  const qid=opt.dataset.qid;
-  const val=opt.dataset.value;
-  qCard.querySelectorAll(`.nf-option[data-qid="${qid}"]`).forEach(x=>x.classList.remove("selected"));
+qCard.addEventListener("click", e => {
+  const opt = e.target.closest(".nf-option");
+  if (!opt) return;
+
+  const qid = opt.dataset.qid;
+  const val = opt.dataset.value;
+
+  qCard.querySelectorAll(`.nf-option[data-qid="${qid}"]`).forEach(x => x.classList.remove("selected"));
   opt.classList.add("selected");
-  state.answers[qid]=Number(val);
-  next.disabled=false;
+
+  state.answers[qid] = Number(val);
+  nextBtn.disabled = false;
 });
 
-back.addEventListener("click",()=>{
-  if(state.step>0) { state.step--; render(); }
+backBtn.addEventListener("click", () => {
+  if (state.step > 0) {
+    state.step--;
+    render();
+  }
 });
 
-next.addEventListener("click",()=>{
-  state.step++;
-  render();
+nextBtn.addEventListener("click", () => {
+  const item = state.path[state.step];
+  if (state.answers[item.id] === undefined) return;
+  if (state.step < state.path.length - 1) {
+    state.step++;
+    render();
+  }
 });
 
-finish.addEventListener("click",()=>{
-  alert("Finished demo! Collected answers: "+JSON.stringify(state.answers,null,2));
+finishBtn.addEventListener("click", () => {
+  alert("Finished scaffold! Answers:\n" + JSON.stringify(state.answers, null, 2));
 });
 
-function restore(item){
-  const existing = state.answers[item.id];
-  if(existing!==undefined){
-    const el=qCard.querySelector(`.nf-option[data-value="${existing}"]`);
-    if(el)el.classList.add("selected");
-    next.disabled=false;
+function restore(item) {
+  const val = state.answers[item.id];
+  if (val !== undefined) {
+    const el = qCard.querySelector(`.nf-option[data-value="${val}"]`);
+    if (el) el.classList.add("selected");
+    nextBtn.disabled = false;
   } else {
-    next.disabled=true;
+    nextBtn.disabled = true;
   }
 }
 
 render();
------END-JS-----
+``
