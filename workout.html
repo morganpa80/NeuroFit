@@ -1,1 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NeuroFit • Your Session</title>
 
+  <!-- Global Styles -->
+  <link rel="stylesheet" href="assets/css/styles.css">
+
+  <style>
+    /* Workout Page Additions (print‑friendly) */
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--nf-blue-900);
+      border-bottom: 2px solid var(--nf-grey-200);
+      padding-bottom: 6px;
+      margin-top: 28px;
+      margin-bottom: 12px;
+    }
+
+    .exercise-block {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--nf-grey-200);
+    }
+
+    .exercise-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--nf-blue-700);
+      margin-bottom: 4px;
+    }
+
+    .exercise-cue {
+      color: var(--nf-grey-700);
+      margin: 0 0 6px;
+    }
+
+    .exercise-info {
+      color: var(--nf-grey-600);
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+
+    /* Feedback Buttons */
+    .feedback-wrap {
+      margin-top: 30px;
+      text-align: center;
+    }
+    .feedback-btn {
+      margin: 6px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--nf-blue-700);
+      background: var(--nf-white);
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .feedback-btn:hover {
+      background: var(--nf-blue-300);
+      color: var(--nf-blue-900);
+    }
+
+    /* Print Button */
+    .print-btn {
+      margin: 22px 0;
+      padding: 12px 18px;
+      border-radius: 10px;
+      background: var(--nf-blue-700);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+    }
+
+    @media print {
+      .print-btn,
+      .feedback-wrap {
+        display: none !important;
+      }
+      header.site {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header class="site">
+    <div class="wrap brand">
+      <img src="assets/img/logo.svg" alt="NeuroFit logo" width="42" height="42" />
+      <h1>NeuroFit</h1>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <h2 class="nf-hero-title">Your Personal NeuroFit Session</h2>
+    <p class="nf-hero-sub">A 30‑minute session matched to your movement profile and state.</p>
+
+    <button class="print-btn" onclick="window.print()">Print This Workout</button>
+
+    <!-- Workout container -->
+    <div id="workoutContainer"></div>
+
+    <div class="feedback-wrap">
+      <h3>How do you feel now?</h3>
+      <button class="feedback-btn">Relaxed</button>
+      <button class="feedback-btn">Grounded</button>
+      <button class="feedback-btn">Feel Good</button>
+      <button class="feedback-btn">Still Tense</button>
+      <button class="feedback-btn">Need a Break</button>
+    </div>
+
+  </main>
+
+  <script>
+    //---------------------------------------------------------------
+    // LOAD PROFILE + ROUTE
+    //---------------------------------------------------------------
+    const route = JSON.parse(sessionStorage.getItem("screeningRoute") || "{}");
+    const profile = JSON.parse(sessionStorage.getItem("screeningProfile") || "{}");
+
+    //---------------------------------------------------------------
+    // INTERNAL NEUROFIT MOVEMENT LIBRARY (no external sources)
+    //---------------------------------------------------------------
+    const LIB = {
+
+      // ----------------------
+      // WARMUP (by zone)
+      // ----------------------
+      warmup_blue: [
+        { title:"Rhythm March", cue:"Start gently and build a comfortable rhythm.", info:"60–90 sec" },
+        { title:"Arm Swings + Soft Reach", cue:"Keep it light and easy; open up the upper body.", info:"45 sec" },
+      ],
+
+      warmup_green: [
+        { title:"Joint Prep Flow", cue:"Smooth movement through ankles, hips, shoulders.", info:"60 sec" },
+        { title:"Core Activation", cue:"Light brace as you breathe out, soften as you inhale.", info:"45 sec" },
+      ],
+
+      warmup_yellow: [
+        { title:"Grounded Breathing", cue:"Slow inhale, longer exhale; relax shoulders.", info:"60 sec" },
+        { title:"Slow Hip + Spine Mobility", cue:"Move slowly through your comfortable range.", info:"45 sec" },
+      ],
+
+      warmup_red: [
+        { title:"Floor-Based Calm Start", cue:"Lie or sit comfortably with slow, quiet breathing.", info:"60–90 sec" },
+        { title:"Seated Reach Sequence", cue:"Gentle, controlled movements only.", info:"45 sec" },
+      ],
+
+      // ----------------------
+      // MAIN BLOCKS
+      // Selected based on gaps + capabilities + safety
+      // ----------------------
+      upper_easy: [
+        { title:"Wall Push Holds", cue:"Keep elbows under shoulders; gentle pressure.", info:"30 sec hold" }
+      ],
+      upper_mod: [
+        { title:"Incline Push + Hold", cue:"Steady tempo; finish each rep with a brief pause.", info:"8–10 reps" }
+      ],
+      upper_strong: [
+        { title:"Push-Up Variants", cue:"Smooth descent, strong press away from the floor.", info:"6–10 reps" }
+      ],
+
+      lower_easy: [
+        { title:"Chair Sit‑to‑Stand", cue:"Use a slow, controlled tempo; keep knees comfortable.", info:"8–12 reps" }
+      ],
+      lower_mod: [
+        { title:"Supported Squat Pattern", cue:"Steady pace; stay within comfortable depth.", info:"10–12 reps" }
+      ],
+      lower_strong: [
+        { title:"Hinge + Step Combo", cue:"Keep spine long; move with confidence.", info:"6–10 reps each side" }
+      ],
+
+      core_easy: [
+        { title:"Deadbug Arms Only", cue:"Keep ribs soft and low; small smooth motions.", info:"30–40 sec" }
+      ],
+      core_mod: [
+        { title:"Plank Knee Hover", cue:"Light brace, smooth breaths.", info:"20–30 sec" }
+      ],
+      core_strong: [
+        { title:"Anti‑Rotation Press", cue:"Control the exhale; resist rotation.", info:"10–12 reps each side" }
+      ],
+
+      hip_easy: [
+        { title:"Glute Bridge (Supported)", cue:"Lift gently; pause at the top.", info:"10–12 reps" }
+      ],
+      hip_mod: [
+        { title:"Hinge + Reach", cue:"Move through hips; keep your spine long.", info:"8–10 reps" }
+      ],
+      hip_strong: [
+        { title:"Single‑Leg Bridge Prep", cue:"Slow tempo; keep hips level.", info:"6–8 reps each side" }
+      ],
+
+      // ----------------------
+      // BALANCE BLOCK
+      // ----------------------
+      balance_static: [
+        { title:"Single-Leg Stand (Support Optional)", cue:"Soft gaze; steady breathing.", info:"20–30 sec per side" }
+      ],
+      balance_dynamic: [
+        { title:"Step + Reach Pattern", cue:"Slow, smooth steps with soft focus.", info:"10 reps each side" }
+      ],
+      balance_everyday: [
+        { title:"Carry + Walk Pattern", cue:"Light object, steady pace.", info:"30–45 sec" }
+      ],
+
+      // ----------------------
+      // COOLDOWN
+      // ----------------------
+      cooldown_blue: [
+        { title:"Gentle Stretch Reset", cue:"Stay light and relaxed.", info:"60 sec" }
+      ],
+      cooldown_green: [
+        { title:"Breath + Spine Cooldown", cue:"Slow down your breathing as you move.", info:"60 sec" }
+      ],
+      cooldown_yellow: [
+        { title:"Long Exhale Breathing", cue:"Inhale 4, exhale 6–8.", info:"60–90 sec" }
+      ],
+      cooldown_red: [
+        { title:"Grounded Rest", cue:"Stay low, slow, and comfortable.", info:"90 sec" }
+      ]
+    };
+
+    //---------------------------------------------------------------
+    // INTERNAL SELECTION LOGIC
+    // (based solely on your NeuroFit scoring + tags)
+    //---------------------------------------------------------------
+    const color = route.preColor || "green";
+
+    function pickZoneWarmup() {
+      return LIB["warmup_" + color] || LIB.warmup_green;
+    }
+
+    function pickMainBlocks() {
+      const t = route.tags || [];
+
+      // Strength
+      let upper = LIB.upper_mod;
+      if (t.includes("safety_joint_pain")) upper = LIB.upper_easy;
+      else if (route.gaps.strength > 1.5) upper = LIB.upper_strong;
+
+      // Lower
+      let lower = LIB.lower_mod;
+      if (t.includes("safety_knee")) lower = LIB.lower_easy;
+      else if (route.gaps.mobility < -0.5 && route.BFR_dynamic >= 3) lower = LIB.lower_strong;
+
+      // Core
+      let core = LIB.core_mod;
+      if (t.includes("vestibular_care")) core = LIB.core_easy;
+      else if (route.gaps.coreStrength > 1.0) core = LIB.core_strong;
+
+      // Hip
+      let hip = LIB.hip_mod;
+      if (t.includes("safety_hip_back")) hip = LIB.hip_easy;
+      else if (route.BFR_everyday >= 3.5) hip = LIB.hip_strong;
+
+      return [upper[0], lower[0], core[0], hip[0]];
+    }
+
+    function pickBalanceBlock() {
+      if (route.BFR_static <= 2.5) return LIB.balance_static[0];
+      if (route.BFR_dynamic <= 2.5) return LIB.balance_dynamic[0];
+      return LIB.balance_everyday[0];
+    }
+
+    function pickCooldown() {
+      return LIB["cooldown_" + color] || LIB.cooldown_green;
+    }
+
+    //---------------------------------------------------------------
+    // RENDER WORKOUT
+    //---------------------------------------------------------------
+    const container = document.getElementById("workoutContainer");
+
+    function section(title, blocks) {
+      let html = `<div class="section-title">${title}</div>`;
+      blocks.forEach(b => {
+        html += `
+          <div class="exercise-block">
+            <div class="exercise-title">${b.title}</
