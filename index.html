@@ -3,67 +3,90 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <title>NeuroFit</title>
+  <meta name="description" content="NeuroFit: Personalised movement and regulation support you can use today." />
 
-  assets/css/styles.css
+  <!-- Global Styles -->
+  <link rel="stylesheet" href="assets/css/styles.css" />
+
+  <!-- Favicon / App Icon (optional; safe to keep if the files exist) -->
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml" />
 </head>
-
 <body>
+  <!-- Skip link for keyboard users -->
+  <a class="skip-link" href="#main-content">Skip to main content</a>
 
-  #main-contentSkip to main content</a>
-
+  <!-- Site Header -->
   <header class="site" role="banner">
     <div class="wrap brand">
-      assets/img/logo.svg
+      <img src="assets/img/logo.svg" alt="NeuroFit logo" width="40" height="40" />
       <h1>NeuroFit</h1>
     </div>
   </header>
 
-  <main id="main-content" class="wrap">
-
-    <section class="nf-hero">
+  <!-- Main -->
+  <main id="main-content" class="wrap" role="main">
+    <!-- HERO -->
+    <section class="nf-hero" aria-labelledby="hero-title">
       <div class="nf-hero-head">
-        <h2 class="nf-hero-title">Move. Ground. Grow.</h2>
+        <h2 id="hero-title" class="nf-hero-title">Move. Ground. Grow.</h2>
         <p class="nf-hero-sub">Personalised movement &amp; regulation support you can use today.</p>
       </div>
-
       <p class="nf-hero-meta">Choose what you need today.</p>
 
-      <div class="grid-3">
-
-        <!-- PLAN -->
-        <article class="card">
+      <!-- CTA GRID -->
+      <div class="grid-3" role="list">
+        <!-- A) Plan -->
+        <article class="card" role="listitem">
           <p class="kicker">NeuroFit —</p>
           <h3 class="title">Your Plan, Your Way</h3>
           <p class="tag">A personalised profile that creates a plan designed for you.</p>
-          <p class="sub">A guided adaptive screening that responds to your answers and builds a tailored 6‑week movement programme.</p>
-          planScreening.htmlStart Personal Plan</a>
+          <p class="sub">
+            A guided, adaptive screening that responds to your answers and builds a tailored 6‑week movement programme.
+          </p>
+          <div>
+            <a class="btn" href="planScreening.html" aria-describedby="plan-desc">Start Personal Plan</a>
+            <p id="plan-desc" class="visually-hidden">
+              Opens the adaptive screening to build your personalised programme.
+            </p>
+          </div>
         </article>
 
-        <!-- GROUND & GO -->
-        <article class="card">
+        <!-- B) Ground & Go -->
+        <article class="card" role="listitem">
           <p class="kicker">NeuroFit</p>
           <h3 class="title">Ground &amp; Go</h3>
           <p class="tag">Small shift, big difference.</p>
-          <p class="sub">A short guided reset that meets you where you are right now.</p>
-          groundgo.htmlStart Ground &amp; Go</a>
+          <p class="sub">
+            A short, guided session that meets you where you are right now and supports a quick return to calm, focus and readiness.
+          </p>
+          <div>
+            <a class="btn secondary" href="groundgo.html">Start Ground &amp; Go</a>
+          </div>
         </article>
 
-        <!-- PULSE -->
-        <article class="card">
+        <!-- C) Pulse -->
+        <article class="card" role="listitem">
           <p class="kicker">NeuroFit</p>
           <h3 class="title">Pulse</h3>
           <p class="tag">One minute. One move. One fresh start.</p>
-          <p class="sub">A tailored micro‑activity based on eight quick cues.</p>
-          pulse.htmlTry Pulse</a>
+          <p class="sub">
+            A tailored micro‑activity for right now — a mindfulness moment, a grounding drill, or a simple movement burst.
+          </p>
+          <div>
+            <a class="btn ghost" href="pulse.html">Try Pulse</a>
+          </div>
         </article>
-
       </div>
 
-      <p class="footnote">Your questions adapt to your responses so your support always feels right for you.</p>
+      <p class="footnote">
+        Your questions adapt to your responses so your support always feels right for you.
+      </p>
     </section>
-
   </main>
 
+  <!-- Optional: no scripts required on the homepage -->
 </body>
 </html>
+``
