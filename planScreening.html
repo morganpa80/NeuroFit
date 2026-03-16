@@ -7,32 +7,31 @@
   <meta name="description" content="Adaptive screening to build your personalised NeuroFit plan." />
 
   <!-- Global Styles -->
-  <link rel="stylesheet" href="assets/css/styles.css" />
+  assets/css/styles.css
 </head>
 <body>
   <!-- Skip link -->
-  <a class="visually-hidden" href="#main-content">Skip to main content</a>
+  #main-contentSkip to main content</a>
 
-  <!-- Header -->
+  <!-- Site Header -->
   <header class="site" role="banner">
     <div class="wrap brand">
-      <img src="assets/img/logo.svg" width="40" height="40" alt="NeuroFit logo" />
+      assets/img/logo.svg
       <h1>NeuroFit</h1>
     </div>
   </header>
 
   <!-- Main -->
   <main id="main-content" class="wrap" role="main" aria-describedby="screening-intro">
-    <section class="nf-hero" aria-label="Screening">
+    <!-- Intro / Progress -->
+    <section class="nf-hero" aria-label="Screening intro">
       <div class="nf-hero-head">
         <h2 class="nf-hero-title">Your Plan, Your Way</h2>
         <p id="screening-intro" class="nf-hero-sub">
           Your questions adapt to your answers so your 6‑week plan fits how your body and mind usually feel.
         </p>
       </div>
-
-      <!-- Progress -->
-      <div class="nf-hero-meta" id="progressText">Step 1 of ~40‑ish</div>
+      <p class="nf-hero-meta" id="progressText">Step 1 of ~40‑ish</p>
     </section>
 
     <!-- Question card -->
@@ -43,7 +42,7 @@
     <!-- Controls -->
     <div style="display:flex; gap:8px; margin-top:12px;">
       <button id="backBtn" class="btn secondary" type="button">Back</button>
-      <button id="nextBtn" class="btn" type="button">Continue</button>
+      <button id="nextBtn" class="btn" type="button" disabled>Continue</button>
       <button id="finishBtn" class="btn" type="button" hidden>Build My Plan</button>
     </div>
 
@@ -51,6 +50,6 @@
   </main>
 
   <!-- Scripts -->
-  <script src="assets/js/screening.js"></script>
+  assets/js/screening.js</script>
 </body>
 </html>
