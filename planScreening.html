@@ -4,52 +4,57 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>NeuroFit • Screening</title>
-  <meta name="description" content="Adaptive screening to build your personalised NeuroFit plan." />
 
   <!-- Global Styles -->
-  assets/css/styles.css
+  <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
-<body>
-  <!-- Skip link -->
-  #main-contentSkip to main content</a>
 
-  <!-- Site Header -->
-  <header class="site" role="banner">
+<body>
+
+  <!-- Skip Link -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Header -->
+  <header class="site">
     <div class="wrap brand">
-      assets/img/logo.svg
+      <img src="assets/img/logo.svg" alt="NeuroFit logo" width="40" height="40" />
       <h1>NeuroFit</h1>
     </div>
   </header>
 
   <!-- Main -->
-  <main id="main-content" class="wrap" role="main" aria-describedby="screening-intro">
-    <!-- Intro / Progress -->
-    <section class="nf-hero" aria-label="Screening intro">
+  <main id="main-content" class="wrap">
+
+    <!-- Intro Hero -->
+    <section class="nf-hero" aria-labelledby="screening-title">
       <div class="nf-hero-head">
-        <h2 class="nf-hero-title">Your Plan, Your Way</h2>
-        <p id="screening-intro" class="nf-hero-sub">
+        <h2 id="screening-title" class="nf-hero-title">Your Plan, Your Way</h2>
+        <p class="nf-hero-sub">
           Your questions adapt to your answers so your 6‑week plan fits how your body and mind usually feel.
         </p>
       </div>
+
       <p class="nf-hero-meta" id="progressText">Step 1 of ~40‑ish</p>
     </section>
 
-    <!-- Question card -->
-    <section id="qCard" class="card" role="group" aria-live="polite" aria-atomic="true" aria-relevant="additions">
-      <!-- Populated by screening.js -->
+    <!-- Question Card -->
+    <section id="qCard" class="card" role="region" aria-live="polite" aria-atomic="true">
+      <!-- JS will inject the question here -->
     </section>
 
     <!-- Controls -->
-    <div style="display:flex; gap:8px; margin-top:12px;">
+    <div style="display:flex; gap:10px; margin-top:12px;">
       <button id="backBtn" class="btn secondary" type="button">Back</button>
       <button id="nextBtn" class="btn" type="button" disabled>Continue</button>
       <button id="finishBtn" class="btn" type="button" hidden>Build My Plan</button>
     </div>
 
     <p class="footnote">You can go back to change answers except on safety confirmations.</p>
+
   </main>
 
-  <!-- Scripts -->
-  assets/js/screening.js</script>
+  <!-- JS -->
+  <script src="assets/js/screening.js"></script>
+
 </body>
 </html>
