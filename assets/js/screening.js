@@ -1,261 +1,171 @@
 // =============================================================
-// NeuroFit • screening.js
-// Full sprint-style adaptive screening controller
-// Integrates: questions.js, logic.js, compute.js, router.js
+// NeuroFit — Screening (Minimal Working Scaffold)
 // =============================================================
 
-// -------------------------------------------------------------
-// 0. Setup
-// -------------------------------------------------------------
-let screeningPath = [];      // final ordered list of questions
-let answers = {};            // { qid: value }
-let step = 0;                // index into screeningPath
-let displayTarget = 41;      // default "~40-ish"
+// --- Display target "~40-ish" (just for the progress text)
+const DISPLAY_TARGET = 41;
 
-// DOM
-const qCard = document.getElementById("qCard");
-const progressText = document.getElementById("progressText");
-const backBtn = document.getElementById("backBtn");
-const nextBtn = document.getElementById("nextBtn");
-const finishBtn = document.getElementById("finishBtn");
+// --- Minimal state for the sprint flow
+const state = {
+  step: 0,                // 0-based index into `path`
+  answers: {},            // { qid: value }
+  path: []                // ordered list of items we show this run
+};
 
-// -------------------------------------------------------------
-// 1. Initialise Adaptive Path
-// -------------------------------------------------------------
-function initScreening() {
-  // Build selection WITHOUT answers (first pass)
-  // We only use selection gates requiring early answers (none yet)
-  screeningPath = window.NeuroFitLogic.buildSelection(answers);
+// --- Tiny placeholder path (3 questions just to prove flow)
+const QUESTIONS = [
+  {
+    id: "A1",
+    text: "How would you describe your general energy level most weeks?",
+    type: "likert5", // 1..5
+    options: ["Very low", "Low", "Moderate", "High", "Very high"]
+  },
+  {
+    id: "B2",
+    text: "How important is improving balance & stability to you?",
+    type: "likert5",
+    options: ["Not at all", "Low", "Moderate", "High", "Very high"]
+  },
+  {
+    id: "F2",
+    text: "Do you experience dizziness with turning or rising quickly?",
+    type: "boolean", // locks Back here in the full version; we'll allow back for now
+    options: ["No", "Yes"],
+    safety: true
+  }
+];
 
-  // shuffle determined inside logic.js with session-stable RNG
-  step = 0;
-  renderStep();
-}
+// Use the sample path for now
+state.path = [...QUESTIONS];
 
-// -------------------------------------------------------------
-// 2. Render Current Step
-// -------------------------------------------------------------
-function renderStep() {
-  const item = screeningPath[step];
+// --- DOM references
+const qCard       = document.getElementById("qCard");
+const progressTxt = document.getElementById("progressText");
+const backBtn     = document.getElementById("backBtn");
+const nextBtn     = document.getElementById("nextBtn");
+const finishBtn   = document.getElementById("finishBtn");
+
+// --- Render current step
+function render() {
+  const i = state.step;
+  const item = state.path[i];
   if (!item) return;
 
-  // Progress text
-  progressText.textContent = `Step ${step + 1} of ~${displayTarget}-ish`;
+  // Progress
+  progressTxt.textContent = `Step ${i + 1} of ~${DISPLAY_TARGET}-ish`;
 
-  // Build UI
+  // Build the question UI
   qCard.innerHTML = `
-    <h3 class="title">${escapeHTML(item.text)}</h3>
-    <div class="sub">${helperText(item)}</div>
-    <div class="nf-options"
-         style="margin-top:12px; display:grid; gap:10px;
-                grid-template-columns:repeat(auto-fit,minmax(120px,1fr));">
+    <h3 class="title" id="qTitle">${escapeHTML(item.text)}</h3>
+    <div class="sub" id="qHelp">${helpText(item)}</div>
+    <div class="nf-options" role="radiogroup" aria-labelledby="qTitle"
+         style="margin-top:12px; display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(120px,1fr));">
       ${renderOptions(item)}
     </div>
   `;
 
-  restorePreviousAnswer(item);
-  configureControls(item);
+  // Restore prior answer if present
+  const prev = state.answers[item.id];
+  if (prev !== undefined) {
+    const pill = qCard.querySelector(`.nf-option[data-value="${cssEsc(prev)}"]`);
+    if (pill) {
+      pill.classList.add("selected");
+      const input = pill.querySelector("input");
+      if (input) input.checked = true;
+      nextBtn.disabled = false;
+    }
+  } else {
+    nextBtn.disabled = true;
+  }
+
+  // Show/hide controls
+  backBtn.disabled = false; // keep simple in scaffold
+  nextBtn.hidden   = (i === state.path.length - 1);
+  finishBtn.hidden = !nextBtn.hidden;
 }
 
-// -------------------------------------------------------------
-// 3. Build Option HTML
-// -------------------------------------------------------------
+function helpText(item) {
+  if (item.type === "likert5") return "Choose the option that matches your typical week.";
+  if (item.type === "boolean") return "Please choose one option.";
+  return "";
+}
+
 function renderOptions(item) {
   if (item.type === "likert5") {
-    return [1,2,3,4,5]
-      .map(v => pill(item.id, v, likertLabel(v)))
-      .join("");
+    return item.options.map((label, idx) => pill(item.id, idx + 1, label)).join("");
   }
-
   if (item.type === "boolean") {
-    return [
-      pill(item.id, 0, "No"),
-      pill(item.id, 1, "Yes")
-    ].join("");
+    return item.options.map((label, idx) => pill(item.id, idx, label)).join("");
   }
-
-  if (item.type === "multi" && item.options) {
-    return item.options
-      .map(opt => multiPill(item.id, opt))
-      .join("");
-  }
-
-  return "<p>Error: unknown type</p>";
-}
-
-// Likert helpers
-function likertLabel(v) {
-  return ["Very low","Low","Moderate","High","Very high"][v-1];
+  return `<p>Unsupported question type.</p>`;
 }
 
 function pill(qid, value, label) {
   return `
-    <label class="nf-option"
-           data-qid="${qid}"
-           data-value="${value}"
-           style="display:flex;justify-content:center;align-items:center;
-           padding:10px;border-radius:999px;border:1px solid var(--nf-grey-200);
-           background:#fff;cursor:pointer;">
-      <input type="radio" name="${qid}" value="${value}"
-             style="opacity:0;position:absolute;">
+    <label class="nf-option" data-qid="${qid}" data-value="${value}"
+           style="display:flex; align-items:center; justify-content:center;
+                  padding:10px 12px; border-radius:999px; cursor:pointer;
+                  border:1px solid var(--nf-grey-200); background:#fff;">
+      <input type="radio" name="${qid}" value="${value}" style="opacity:0; position:absolute;">
       <span>${escapeHTML(label)}</span>
     </label>
   `;
 }
 
-function multiPill(qid, label) {
-  return `
-    <label class="nf-option"
-           data-qid="${qid}"
-           data-value="${escapeAttr(label)}"
-           data-multi="1"
-           style="display:flex;justify-content:center;align-items:center;
-           padding:10px;border-radius:999px;border:1px solid var(--nf-grey-200);
-           background:#fff;cursor:pointer;">
-      <input type="checkbox" name="${qid}"
-             value="${escapeAttr(label)}"
-             style="opacity:0;position:absolute;">
-      <span>${escapeHTML(label)}</span>
-    </label>
-  `;
-}
-
-// -------------------------------------------------------------
-// 4. Answer Selection
-// -------------------------------------------------------------
-qCard.addEventListener("click", e => {
+// --- Events
+qCard.addEventListener("click", (e) => {
   const pill = e.target.closest(".nf-option");
   if (!pill) return;
 
   const qid = pill.dataset.qid;
-  const value = pill.dataset.value;
-  const isMulti = pill.dataset.multi === "1";
+  const val = pill.dataset.value;
 
-  if (!isMulti) {
-    // clear previous for this qid
-    qCard.querySelectorAll(`.nf-option[data-qid="${cssEsc(qid)}"]`)
-         .forEach(p => p.classList.remove("selected"));
+  // Clear existing selection in this question
+  qCard.querySelectorAll(`.nf-option[data-qid="${cssEsc(qid)}"]`)
+      .forEach(p => p.classList.remove("selected"));
+  pill.classList.add("selected");
 
-    pill.classList.add("selected");
+  // Store answer (numbers for likert/boolean)
+  const n = Number(val);
+  state.answers[qid] = Number.isNaN(n) ? val : n;
 
-    answers[qid] = Number(value);
-    nextBtn.disabled = false;
-  } else {
-    // multiselect
-    pill.classList.toggle("selected");
-
-    const selected = [...qCard.querySelectorAll(
-      `.nf-option[data-qid="${cssEsc(qid)}"].selected`
-    )].map(p => p.dataset.value);
-
-    answers[qid] = selected;
-    nextBtn.disabled = selected.length === 0;
-  }
+  nextBtn.disabled = false;
 });
 
-// -------------------------------------------------------------
-// 5. Navigation
-// -------------------------------------------------------------
 backBtn.addEventListener("click", () => {
-  const item = screeningPath[step];
-  if (item.safety) return; // locked
-
-  if (step > 0) {
-    step--;
-    renderStep();
+  if (state.step > 0) {
+    state.step -= 1;
+    render();
   }
 });
 
 nextBtn.addEventListener("click", () => {
-  const item = screeningPath[step];
-  if (answers[item.id] === undefined ||
-      answers[item.id] === null ||
-      (Array.isArray(answers[item.id]) && answers[item.id].length === 0)) {
-    return;
-  }
-
-  if (step < screeningPath.length - 1) {
-    step++;
-    renderStep();
+  const item = state.path[state.step];
+  if (state.answers[item.id] === undefined) return; // require answer
+  if (state.step < state.path.length - 1) {
+    state.step += 1;
+    render();
   }
 });
 
 finishBtn.addEventListener("click", () => {
-  const item = screeningPath[step];
-  if (answers[item.id] === undefined ||
-      answers[item.id] === null ||
-      (Array.isArray(answers[item.id]) && answers[item.id].length === 0)) {
-    return;
-  }
-
-  // Compute profile
-  const profile = window.NeuroFitCompute.compute(answers);
-
-  // Route to plan
-  window.NeuroFitRouter.buildRoute(answers, profile);
+  const item = state.path[state.step];
+  if (state.answers[item.id] === undefined) return; // require answer
+  // For now, just prove it worked:
+  alert("Screening scaffold complete. Answers: " + JSON.stringify(state.answers, null, 2));
+  // Later:
+  // sessionStorage.setItem('screeningAnswers', JSON.stringify(state.answers));
+  // location.href = 'workout.html';
 });
 
-// -------------------------------------------------------------
-// 6. Helpers
-// -------------------------------------------------------------
-function restorePreviousAnswer(item) {
-  const val = answers[item.id];
-  if (val === undefined) {
-    nextBtn.disabled = true;
-    return;
-  }
-
-  if (Array.isArray(val)) {
-    val.forEach(v => {
-      const el = qCard.querySelector(
-        `.nf-option[data-value="${cssEsc(v)}"]`
-      );
-      if (el) el.classList.add("selected");
-    });
-    nextBtn.disabled = val.length === 0;
-    return;
-  }
-
-  const el = qCard.querySelector(
-    `.nf-option[data-value="${cssEsc(val)}"]`
-  );
-  if (el) el.classList.add("selected");
-  nextBtn.disabled = false;
+// --- Utils
+function escapeHTML(s = "") {
+  return s.replace(/[&<>\"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[c]));
 }
-
-function configureControls(item) {
-  backBtn.disabled = !!item.safety;
-  nextBtn.hidden = (step === screeningPath.length - 1);
-  finishBtn.hidden = !nextBtn.hidden;
-}
-
-function helperText(item) {
-  if (item.type === "likert5")
-    return "Choose the option that matches your typical week.";
-  if (item.type === "boolean")
-    return "Please choose one option.";
-  if (item.type === "multi")
-    return "Select all that apply.";
-  if (item.safety)
-    return "This helps keep your plan safe.";
-  return "";
-}
-
-function escapeHTML(s="") {
-  return s.replace(/[&<>"']/g, c => (
-    { "&":"&amp;", "<":"&lt;", ">":"&gt;", "\"":"&quot;", "'":"&#39;" }[c]
-  ));
-}
-
-function escapeAttr(s="") {
-  return escapeHTML(s).replace(/"/g,'&quot;');
-}
-
-function cssEsc(s="") {
+function cssEsc(s = "") {
   return String(s).replace(/"/g, '\\"');
 }
 
-// -------------------------------------------------------------
-// 7. INIT
-// -------------------------------------------------------------
-initScreening();
+// --- Init
+render();
+``
