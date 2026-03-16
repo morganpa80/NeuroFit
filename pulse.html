@@ -1,1 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NeuroFit • Pulse (1‑minute micro‑activity)</title>
 
+  <!-- Global Styles -->
+  <link rel="stylesheet" href="assets/css/styles.css" />
+
+  <!-- Page-specific (print friendly tweaks) -->
+  <style>
+    .section-title{
+      font-size:1.25rem; font-weight:800; color:var(--nf-blue-900);
+      border-bottom:2px solid var(--nf-grey-200); padding-bottom:6px;
+      margin:22px 0 10px;
+    }
+    .result-card{
+      margin-top:12px; padding:14px;
+      border:1px solid var(--nf-grey-200); border-radius:var(--nf-radius);
+      background:#fff; box-shadow: var(--nf-shadow);
+    }
+    .result-title{ font-weight:800; color:var(--nf-blue-700); margin:0 0 6px; font-size:1.1rem; }
+    .result-meta{ color:var(--nf-grey-600); margin:0 0 6px; }
+    .result-cue{ color:var(--nf-grey-700); margin:0; }
+
+    .controls{ display:flex; gap:10px; margin-top:12px; }
+    .print-btn{ margin-top:12px; padding:10px 14px; border-radius:10px;
+      background: var(--nf-blue-700); color:#fff; border:0; font-weight:700; cursor:pointer; }
+
+    .feedback-wrap{ margin-top:18px; text-align:center; }
+    .feedback-btn{
+      margin:6px; padding:10px 14px; border-radius:10px;
+      border:1px solid var(--nf-blue-700); background:#fff; cursor:pointer; font-weight:600;
+    }
+    .feedback-btn:hover{ background:#eef6ff; }
+
+    @media print{
+      header.site, .controls, .feedback-wrap, .nf-hero { display:none !important; }
+      .result-card{ box-shadow:none; border:1px solid #000; }
+      body{ color:#000; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Skip link -->
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <!-- Header -->
+  <header class="site" role="banner">
+    <div class="wrap brand">
+      <img src="assets/img/logo.svg" alt="NeuroFit logo" width="40" height="40" />
+      <h1>NeuroFit</h1>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main id="main-content" class="wrap" role="main">
+
+    <!-- Intro -->
+    <section class="nf-hero" aria-labelledby="pulse-title">
+      <div class="nf-hero-head">
+        <h2 id="pulse-title" class="nf-hero-title">NeuroFit Pulse</h2>
+        <p class="nf-hero-sub">One minute. One move. One fresh start.</p>
+      </div>
+      <p class="nf-hero-meta">Eight quick taps → we’ll pick one tailored micro‑activity for right now.</p>
+    </section>
+
+    <!-- Sprint UI -->
+    <section class="card" aria-label="Pulse sprint" style="margin-top:12px;">
+      <div class="sub" id="pulseProgress">Step 1 of ~8</div>
+      <div id="pulseStep" aria-live="polite" aria-atomic="true" style="margin-top:8px;"></div>
+
+      <div class="controls">
+        <button id="pulseBack" class="btn secondary" type="button">Back</button>
+        <button id="pulseNext" class="btn" type="button" disabled>Next</button>
+        <button id="pulseFinish" class="btn" type="button" hidden>Pick My Pulse</button>
+      </div>
+    </section>
+
+    <!-- Result -->
+    <section id="pulseResult" aria-live="polite" aria-atomic="true"></section>
+
+    <!-- Print -->
+    <button id="pulsePrint" class="print-btn" type="button" hidden>Print This Activity</button>
+
+    <!-- Feedback (local only) -->
+    <div class="feedback-wrap">
+      <h3>How do you feel now?</h3>
+      <button class="feedback-btn" data-fb="Relaxed">Relaxed</button>
+      <button class="feedback-btn" data-fb="Grounded">Grounded</button>
+      <button class="feedback-btn" data-fb="Feel Good">Feel Good</button>
+      <button class="feedback-btn" data-fb="Still Tense">Still Tense</button>
+      <button class="feedback-btn" data-fb="Need a Break">Need a Break</button>
+      <p id="fb-note" class="sub" style="margin-top:6px;"></p>
+    </div>
+
+  </main>
+
+  <!-- JS -->
+  <script src="assets/js/pulse.js"></script>
+</body>
+</html>
+``
