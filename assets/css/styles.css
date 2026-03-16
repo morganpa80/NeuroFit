@@ -7,26 +7,21 @@
    Design Tokens
 ------------------------------ */
 :root {
-  /* Brand Colours */
-  --nf-blue-900: #0a2540;   /* headers / strong text */
-  --nf-blue-700: #134b8a;   /* primary brand colour */
-  --nf-blue-500: #2a7bd6;   /* hover / light accent */
-  --nf-blue-300: #8fc7ff;   /* light UI accents */
+  --nf-blue-900: #0a2540;
+  --nf-blue-700: #134b8a;
+  --nf-blue-500: #2a7bd6;
+  --nf-blue-300: #8fc7ff;
 
-  --nf-grey-900: #1f2937;   /* primary text */
-  --nf-grey-600: #6b7280;   /* secondary text */
-  --nf-grey-200: #e5e7eb;   /* borders / dividers */
-  --nf-grey-100: #f5f7fb;   /* soft panels */
-  --nf-white:    #ffffff;
+  --nf-grey-900: #1f2937;
+  --nf-grey-700: #374151;
+  --nf-grey-600: #6b7280;
+  --nf-grey-200: #e5e7eb;
+  --nf-grey-100: #f5f7fb;
+  --nf-white: #ffffff;
 
-  /* Layout + Radius + Effects */
   --nf-radius: 12px;
   --nf-shadow: 0 8px 24px rgba(10, 37, 64, 0.08);
-
-  /* Focus Outline */
   --nf-focus: 2px solid var(--nf-blue-500);
-
-  /* Motion */
   --nf-transition: 0.25s ease;
 }
 
@@ -35,98 +30,65 @@
 ------------------------------ */
 *,
 *::before,
-*::after {
-  box-sizing: border-box;
-}
-
+*::after { box-sizing: border-box; }
 html, body { height: 100%; }
 
 body {
   margin: 0;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto,
-               "Helvetica Neue", Arial, "Noto Sans",
-               "Apple Color Emoji", "Segoe UI Emoji";
-  color: var(--nf-grey-900);
+               "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji",
+               "Segoe UI Emoji";
   background: var(--nf-white);
+  color: var(--nf-grey-900);
   line-height: 1.45;
 }
 
 /* ------------------------------
-   Layout Wrappers
+   Layout
 ------------------------------ */
-.wrap {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 20px;
-}
+.wrap { max-width: 1120px; margin: 0 auto; padding: 20px; }
 
 header.site {
   padding: 16px 0;
   border-bottom: 1px solid var(--nf-grey-200);
 }
 
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.brand img {
-  width: 40px;
-  height: 40px;
-}
-
-.brand h1 {
-  margin: 0;
-  font-size: 18px;
-  color: var(--nf-blue-900);
-}
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand img { width: 40px; height: 40px; }
+.brand h1 { margin: 0; font-size: 18px; color: var(--nf-blue-900); }
 
 /* ------------------------------
-   Hero Section
+   Hero
 ------------------------------ */
 .nf-hero {
   margin-top: 18px;
   padding: 28px 22px;
-  background: linear-gradient(180deg, #f9fbff 0%, #ffffff 100%);
-  border: 1px solid var(--nf-grey-200);
   border-radius: var(--nf-radius);
+  border: 1px solid var(--nf-grey-200);
+  background: linear-gradient(180deg,#f9fbff 0%,#ffffff 100%);
   box-shadow: var(--nf-shadow);
 }
 
 .nf-hero-head { text-align: center; }
-
 .nf-hero-title {
   margin: 6px 0 4px;
   font-size: clamp(28px, 4vw, 40px);
   font-weight: 800;
   color: var(--nf-blue-900);
 }
-
-.nf-hero-sub {
-  margin: 0 0 6px;
-  color: var(--nf-grey-600);
-}
-
-.nf-hero-meta {
-  text-align: center;
-  color: var(--nf-grey-600);
-  margin: 8px 0 16px;
-}
+.nf-hero-sub { margin: 0 0 6px; color: var(--nf-grey-600); }
+.nf-hero-meta { text-align: center; color: var(--nf-grey-600); margin: 8px 0 16px; }
 
 /* ------------------------------
-   Content Grid + Cards
+   Grid + Cards
 ------------------------------ */
 .grid-3 {
   display: grid;
   gap: 16px;
   grid-template-columns: 1fr;
 }
-
-@media (min-width: 760px) {
-  .grid-3 {
-    grid-template-columns: repeat(3, 1fr);
-  }
+@media(min-width:760px){
+  .grid-3 { grid-template-columns: repeat(3,1fr); }
 }
 
 .card {
@@ -140,40 +102,15 @@ header.site {
   justify-content: space-between;
   transition: box-shadow var(--nf-transition);
 }
-
-/* Optional card hover lift */
-.card:hover {
-  box-shadow: 0 12px 28px rgba(10, 37, 64, 0.12);
-}
+.card:hover { box-shadow: 0 12px 28px rgba(10,37,64,0.12); }
 
 /* ------------------------------
-   Text Elements (utility)
+   Text styling
 ------------------------------ */
-.kicker {
-  margin: 0;
-  font-size: 0.9rem;
-  letter-spacing: 0.02em;
-  font-weight: 600;
-  color: var(--nf-blue-700);
-}
-
-.title {
-  margin: 0.1rem 0 0.35rem;
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: var(--nf-blue-900);
-}
-
-.tag {
-  margin: 0 0 0.25rem;
-  font-weight: 700;
-  color: var(--nf-blue-700);
-}
-
-.sub {
-  margin: 0 0 0.8rem;
-  color: var(--nf-grey-600);
-}
+.kicker { margin: 0; font-size: .9rem; font-weight: 600; color: var(--nf-blue-700); }
+.title { margin: .1rem 0 .35rem; font-weight: 800; color: var(--nf-blue-900); font-size: 1.15rem; }
+.tag { margin: 0 0 .25rem; font-weight: 700; color: var(--nf-blue-700); }
+.sub { margin: 0 0 .8rem; color: var(--nf-grey-600); }
 
 /* ------------------------------
    Buttons
@@ -182,65 +119,50 @@ header.site {
   appearance: none;
   cursor: pointer;
   padding: 10px 14px;
-  border: 1px solid var(--nf-blue-700);
   border-radius: 10px;
   font-weight: 700;
-  transition: background var(--nf-transition),
-              border-color var(--nf-transition),
-              color var(--nf-transition);
+  border: 1px solid var(--nf-blue-700);
   background: var(--nf-blue-700);
   color: #fff;
+  transition: var(--nf-transition);
 }
-
 .btn:hover {
   background: var(--nf-blue-500);
   border-color: var(--nf-blue-500);
 }
 
-/* Secondary */
 .btn.secondary {
-  background: var(--nf-white);
+  background: #fff;
   color: var(--nf-blue-700);
 }
-
 .btn.secondary:hover {
-  background: #eff6ff;
+  background: #eef6ff;
 }
 
-/* Ghost */
-.btn.ghost {
-  background: transparent;
-  color: var(--nf-blue-700);
-  border-color: var(--nf-grey-200);
-}
-
-.btn.ghost:hover {
-  background: #f7fbff;
+/* ------------------------------
+   Pill selected state (FIX)
+------------------------------ */
+.nf-option.selected {
+  background: var(--nf-blue-500);
+  color: #fff;
+  border-color: var(--nf-blue-700);
+  font-weight: 700;
 }
 
 /* ------------------------------
    Accessibility
 ------------------------------ */
-:focus {
-  outline: var(--nf-focus);
-  outline-offset: 2px;
-}
+:focus { outline: var(--nf-focus); outline-offset: 2px; }
 
 .visually-hidden {
   position: absolute !important;
-  height: 1px;
-  width: 1px;
+  height: 1px; width: 1px;
   overflow: hidden;
-  clip: rect(1px, 1px, 1px, 1px);
-  white-space: nowrap;
   clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 /* ------------------------------
-   Footer Note
+   Footer note
 ------------------------------ */
-.footnote {
-  text-align: center;
-  margin-top: 14px;
-  color: var(--nf-grey-600);
-}
+.footnote { text-align: center; margin-top: 14px; color: var(--nf-grey-600); }
