@@ -1,48 +1,46 @@
+-----START-HTML-----
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NeuroFit • Screening</title>
-  <meta name="description" content="Adaptive screening to build your personalised NeuroFit plan." />
-
-  <!-- Global Styles -->
-  <link rel="stylesheet" href="assets/css/styles.css" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NeuroFit • Screening</title>
+assets/css/styles.css
 </head>
 <body>
 
-  <!-- Skip Link -->
-  <a class="skip-link" href="#main-content">Skip to main content</a>
+#main-contentSkip to main content</a>
 
-  <!-- Header -->
-  <header class="site" role="banner">
-    <div class="wrap brand">
-      <img src="assets/img/logo.svg" alt="NeuroFit logo" width="40" height="40" />
-      <h1>NeuroFit</h1>
-    </div>
-  </header>
+<header class="site">
+  <div class="wrap brand">
+    assets/img/logo.svg
+    <h1>NeuroFit</h1>
+  </div>
+</header>
 
-  <!-- Main -->
-  <main id="main-content" class="wrap" role="main" aria-describedby="screening-intro">
+<main id="main-content" class="wrap">
 
-    <!-- Intro / Progress -->
-    <section class="nf-hero" aria-label="Screening intro">
-      <div class="nf-hero-head">
-        <h2 class="nf-hero-title">Your Plan, Your Way</h2>
-        <p id="screening-intro" class="nf-hero-sub">
-          Your questions adapt to your answers so your 6 week plan fits how your body and mind usually feel.
-        </p>
-      </div>
-      <p class="nf-hero-meta" id="progressText">Step 1 of ~40ish</p>
-    </section>
+<section class="nf-hero">
+  <div class="nf-hero-head">
+    <h2 class="nf-hero-title">Your Plan, Your Way</h2>
+    <p class="nf-hero-sub">Your questions adapt to your answers so your 6‑week plan fits how your body usually feels.</p>
+  </div>
+  <p class="nf-hero-meta" id="progressText">Step 1 of ~40ish</p>
+</section>
 
-    <!-- Question card -->
-    <section id="qCard" class="card" role="group" aria-live="polite" aria-atomic="true">
-      <!-- screening.js will inject the question here -->
-    </section>
+<section id="qCard" class="card" aria-live="polite"></section>
 
-    <!-- Controls -->
-    <div style="display:flex; gap:10px; margin-top:12px;">
-      <button id="backBtn" class="btn secondary" type="button">Back</button>
-      <button id="nextBtn" class="btn" type="button" disabled>Continue</button>
-      <button id="finish
+<div style="display:flex;gap:10px;margin-top:12px;">
+  <button id="backBtn" class="btn secondary">Back</button>
+  <button id="nextBtn" class="btn" disabled>Continue</button>
+  <button id="finishBtn" class="btn" hidden>Build My Plan</button>
+</div>
+
+<p class="footnote">You can go back to change answers except on safety confirmations.</p>
+
+</main>
+
+assets/js/screening.js</script>
+</body>
+</html>
+-----END-HTML-----
