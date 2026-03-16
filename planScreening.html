@@ -23,7 +23,6 @@
 
   <!-- Main -->
   <main id="main-content" class="wrap" role="main" aria-describedby="screening-intro">
-    
     <!-- Intro Hero -->
     <section class="nf-hero" aria-labelledby="screening-title">
       <div class="nf-hero-head">
@@ -56,21 +55,13 @@
     </p>
   </main>
 
-  <!-- 🚨 Correct Script Load Order 🚨 -->
-  <!-- 1) Full question bank -->
+  <!-- Engine Modules (correct order) -->
   <script src="assets/js/questions.js"></script>
-
-  <!-- 2) Adaptive logic (60 → ~40 selection) -->
   <script src="assets/js/logic.js"></script>
-
-  <!-- 3) Composite scoring (RI, GOI, BFR, gaps, safety, equipment) -->
   <script src="assets/js/compute.js"></script>
-
-  <!-- 4) Route builder (writes sessionStorage + navigates to workout.html) -->
   <script src="assets/js/router.js"></script>
-
-  <!-- 5) Sprint UI controller (renders questions, multi-select, nav) -->
   <script src="assets/js/screening.js"></script>
 
 </body>
 </html>
+``
